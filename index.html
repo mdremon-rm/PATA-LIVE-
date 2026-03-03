@@ -3,22 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Pata Live - Premium Login</title>
+    <title>Pata Live - Premium</title>
     
-    <!-- Firebase SDKs (Compatibility Mode) -->
+    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
     
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
         :root {
             --primary: #FF2D55;
-            /* আপনার ইমেজের মতো সঠিক ব্লু-পার্পল গ্রেডিয়েন্ট */
             --bg-gradient: linear-gradient(180deg, #A4C1FF 0%, #E2EDFF 40%, #FFFFFF 100%);
-            --input-bg: #FFFFFF;
-            --text-gray: #8E8E93;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
@@ -27,249 +24,189 @@
             font-family: 'Inter', sans-serif; 
             background: var(--bg-gradient); 
             min-height: 100vh; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center;
-            overflow-x: hidden;
+            display: flex; flex-direction: column; align-items: center;
         }
 
         #authWrapper {
-            width: 100%;
-            max-width: 400px;
-            padding: 40px 25px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            width: 100%; max-width: 400px; padding: 50px 25px;
+            display: flex; flex-direction: column; align-items: center;
         }
 
-        /* লোগো সেকশন - ছবির মতো সাইজ */
-        .logo-box {
-            margin-top: 30px;
-            margin-bottom: 5px;
-            text-align: center;
+        /* প্রফেশনাল লোটাস লোগো */
+        .logo-container {
+            width: 160px; height: 160px;
+            background: white; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+            margin-bottom: 15px; border: 2.5px solid var(--primary);
+            overflow: hidden;
         }
-        .main-logo {
-            width: 160px;
-            height: 160px;
-            object-fit: contain;
-        }
-        .welcome-msg {
-            font-size: 26px;
-            font-weight: 600;
-            color: #1a1a1a;
-            margin-bottom: 35px;
-            font-family: 'serif'; /* ছবির ফন্টের সাথে মিল রাখতে */
+        .logo-container img { width: 92%; height: 92%; object-fit: contain; }
+        
+        .welcome-text { font-size: 26px; font-weight: 800; color: #111; margin-bottom: 35px; text-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+
+        /* ইনপুট ফিল্ড ডিজাইন */
+        .field-group {
+            width: 100%; background: white; height: 62px;
+            border-radius: 50px; display: flex; align-items: center;
+            padding: 0 22px; margin-bottom: 18px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.04);
+            border: 1px solid rgba(0,0,0,0.06);
         }
 
-        /* ইনপুট বক্স - ছবির মতো বর্ডারলেস শ্যাডো লুক */
-        .input-group {
-            width: 100%;
-            background: var(--input-bg);
-            height: 58px;
-            border-radius: 50px;
-            display: flex;
-            align-items: center;
-            padding: 0 25px;
-            margin-bottom: 18px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            border: 1px solid #F0F0F0;
+        .country-select {
+            display: flex; align-items: center; gap: 8px;
+            padding-right: 15px; border-right: 1.5px solid #f0f0f0;
+            font-weight: 700; font-size: 17px; color: #222;
         }
-
-        .country-part {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding-right: 15px;
-            border-right: 1.5px solid #EEE;
-            margin-right: 15px;
-            font-weight: 500;
-            color: #333;
-            cursor: pointer;
-        }
-        .flag-img { width: 24px; border-radius: 2px; }
+        .flag { width: 26px; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
 
         input {
-            flex: 1;
-            border: none;
-            outline: none;
-            font-size: 16px;
-            background: transparent;
-            color: #333;
-        }
-        input::placeholder { color: #BBB; }
-
-        .eye-btn {
-            padding-left: 10px;
-            cursor: pointer;
-            font-size: 20px;
-            opacity: 0.6;
+            flex: 1; border: none; outline: none;
+            font-size: 16px; background: transparent;
+            padding: 0 18px; color: #333; font-weight: 500;
         }
 
-        .forgot-pass {
-            width: 100%;
-            text-align: right;
-            font-size: 14px;
-            color: #666;
-            margin-top: -5px;
-            margin-bottom: 35px;
+        .login-action {
+            width: 100%; height: 62px; border-radius: 50px;
+            border: none; background: #E5E5E5; color: #A0A0A0;
+            font-size: 19px; font-weight: 800; cursor: pointer;
+            margin-top: 10px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .login-action.active {
+            background: var(--primary); color: white;
+            box-shadow: 0 10px 25px rgba(255, 45, 85, 0.35);
+            transform: translateY(-1px);
         }
 
-        /* লগইন বাটন - ছবির মতো গ্রে শ্যাডো */
-        .login-btn {
-            width: 100%;
-            height: 58px;
-            border-radius: 50px;
-            border: none;
-            background: #EAEAEA;
-            color: #999;
-            font-size: 19px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.3s;
-            margin-bottom: 80px;
-        }
-        .login-btn.ready {
-            background: var(--primary);
-            color: white;
-            box-shadow: 0 8px 20px rgba(255, 45, 85, 0.25);
-        }
+        .forget-link { width: 100%; text-align: right; font-size: 14px; color: #555; margin-bottom: 15px; font-weight: 500; }
 
-        .or-label {
-            font-size: 20px;
-            font-weight: 600;
-            margin-bottom: 25px;
-            color: #333;
-        }
-
-        /* সোশ্যাল আইকন - ছবির মতো ফিক্সড */
-        .social-box {
-            display: flex;
-            gap: 30px;
-            margin-bottom: 40px;
-        }
+        .or-label { margin: 30px 0; font-weight: 700; color: #333; font-size: 20px; }
+        
+        .social-grid { display: flex; gap: 35px; }
         .social-circle {
-            width: 65px;
-            height: 65px;
-            background: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-            cursor: pointer;
-            border: 1px solid #F5F5F5;
+            width: 68px; height: 68px; background: white; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 8px 18px rgba(0,0,0,0.1); cursor: pointer;
+            transition: 0.2s;
         }
-        .social-circle img { width: 32px; height: 32px; }
+        .social-circle:active { transform: scale(0.92); }
 
-        /* ফুটার */
-        .footer-info {
-            font-size: 13px;
-            color: #888;
-            text-align: center;
-            max-width: 85%;
-            line-height: 1.6;
-        }
-        .footer-info span { color: #333; text-decoration: underline; cursor: pointer; font-weight: 500; }
-
-        /* মোবাইল প্রিভিউ ফিক্স */
-        @media (max-width: 360px) {
-            .main-logo { width: 130px; height: 130px; }
-            .welcome-msg { font-size: 22px; }
-        }
+        /* লগইন পরবর্তী প্রোফাইল ইন্টারফেস */
+        #profileView { display: none; width: 100%; }
+        .app-bar { padding: 20px; display: flex; justify-content: space-between; align-items: center; background: white; border-bottom: 1px solid #eee; }
+        .profile-hero { background: white; margin: 25px; border-radius: 35px; padding: 45px 20px; text-align: center; box-shadow: 0 15px 40px rgba(0,0,0,0.06); }
+        .user-pic { width: 115px; height: 115px; border-radius: 50%; border: 4px solid var(--primary); margin-bottom: 15px; object-fit: cover; }
+        .id-badge { display: inline-block; background: #f8f8f8; padding: 6px 15px; border-radius: 20px; color: #777; font-size: 13px; font-weight: 600; margin-top: 8px; }
     </style>
 </head>
 <body>
 
 <div id="authWrapper">
-    <div class="logo-box">
-        <!-- লোগো ইমেজ সোর্স ফিক্স করা হয়েছে -->
-        <img src="https://i.ibb.co/VYpYmRj/pata-logo.png" alt="Logo" class="main-logo" id="logoImg">
+    <div class="logo-container">
+        <!-- আপনার অরিজিনাল লোটাস লোগো -->
+        <img src="https://i.ibb.co/VYpYmRj/pata-logo.png" onerror="this.src='https://via.placeholder.com/150?text=PATA+LIVE'">
     </div>
-    
-    <h1 class="welcome-msg">Welcome To Pata Live</h1>
+    <h1 class="welcome-text">Welcome To Pata Live</h1>
 
-    <div class="input-group">
-        <div class="country-part" onclick="alert('Select Country')">
-            <img src="https://flagcdn.com/w40/bd.png" class="flag-img" alt="BD">
-            <span>+880</span>
-            <small style="font-size: 8px; margin-left:2px;">▼</small>
+    <div class="field-group">
+        <div class="country-select">
+            <img src="https://flagcdn.com/w40/pk.png" class="flag">
+            <span>+92</span>
+            <small style="margin-left:2px; font-size:10px;">▼</small>
         </div>
-        <input type="tel" id="uPhone" placeholder="Please enter phone number" oninput="validate()">
+        <input type="tel" id="pNum" placeholder="Please enter phone number" oninput="liveVal()">
     </div>
 
-    <div class="input-group">
-        <input type="password" id="uPass" placeholder="Please enter password" oninput="validate()">
-        <span class="eye-btn" onclick="togglePass()">🙈</span>
+    <div class="field-group">
+        <input type="password" id="pPass" placeholder="Please enter password" oninput="liveVal()">
+        <span onclick="passTog()" style="cursor:pointer; font-size:20px;">👁️</span>
     </div>
 
-    <div class="forgot-pass">Forget password</div>
+    <div class="forget-link">Forget password</div>
 
-    <button id="authBtn" class="login-btn" disabled onclick="doLogin()">Log in</button>
+    <button id="lBtn" class="login-action" disabled onclick="alert('Phone Login is Under Maintenance')">Log in</button>
 
     <div class="or-label">Or</div>
 
-    <div class="social-box">
-        <div class="social-circle" onclick="social('google')">
-            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/action/google.svg" alt="G">
+    <div class="social-grid">
+        <div class="social-circle" onclick="gSign()">
+            <svg width="34" height="34" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path></svg>
         </div>
-        <div class="social-circle" onclick="social('facebook')">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/2021_Facebook_icon.svg" alt="F">
+        <div class="social-circle" onclick="alert('Facebook login integration pending')">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/2021_Facebook_icon.svg" width="38">
         </div>
     </div>
+</div>
 
-    <p class="footer-info">
-        By signing up, you agree to our <span onclick="alert('Terms')">Teams of Service</span> & <span onclick="alert('Privacy Policy')">Privacy Policy</span>
-    </p>
+<div id="profileView">
+    <div class="app-bar">
+        <h2 style="color:var(--primary); font-weight:800; letter-spacing:1px;">PATA LIVE</h2>
+        <button onclick="firebase.auth().signOut()" style="background:none; border:none; font-weight:700; color:#666; font-size:16px;">Logout</button>
+    </div>
+    <div class="profile-hero">
+        <img id="uAvatar" class="user-pic" src="">
+        <h2 id="uDisplayName" style="font-weight:800; color:#222;">User Name</h2>
+        <div id="uDisplayId" class="id-badge">ID: --</div>
+        <br>
+        <button onclick="alert('Profile Editing Coming Soon!')" style="margin-top:30px; background:var(--primary); color:white; border:none; padding:15px 40px; border-radius:50px; font-weight:800; box-shadow:0 8px 20px rgba(255,45,85,0.2);">Edit Profile</button>
+    </div>
 </div>
 
 <script>
-    // বাটন ভ্যালিডেশন
-    function validate() {
-        const p = document.getElementById('uPhone').value;
-        const s = document.getElementById('uPass').value;
-        const b = document.getElementById('authBtn');
-        
-        if(p.length >= 8 && s.length >= 6) {
-            b.classList.add('ready');
-            b.disabled = false;
-        } else {
-            b.classList.remove('ready');
-            b.disabled = true;
-        }
-    }
-
-    // পাসওয়ার্ড ভিউ টগল
-    function togglePass() {
-        const i = document.getElementById('uPass');
-        const e = document.querySelector('.eye-btn');
-        if(i.type === 'password') {
-            i.type = 'text';
-            e.innerText = '🐵';
-        } else {
-            i.type = 'password';
-            e.innerText = '🙈';
-        }
-    }
-
-    function doLogin() {
-        const b = document.getElementById('authBtn');
-        b.innerText = "Please wait...";
-        setTimeout(() => {
-            alert("Login Success!");
-            b.innerText = "Log in";
-        }, 1500);
-    }
-
-    function social(t) {
-        alert(t.toUpperCase() + " Login is starting...");
-    }
-    
-    // ছবি লোড না হলে অল্টারনেট সোর্স
-    document.getElementById('logoImg').onerror = function() {
-        this.src = 'https://via.placeholder.com/150?text=PATA+LIVE';
+    const firebaseConfig = {
+        apiKey: "AIzaSyD5vRGyz3qdyqhnt2T9qmlPlTeQKV5Hlbw",
+        authDomain: "pata-live.firebaseapp.com",
+        databaseURL: "https://pata-live-default-rtdb.firebaseio.com/",
+        projectId: "pata-live",
+        storageBucket: "pata-live.firebasestorage.app",
+        messagingSenderId: "644016212127",
+        appId: "1:644016212127:web:214bc06f4677c8188e7aaa"
     };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    function liveVal() {
+        const ph = document.getElementById('pNum').value;
+        const pw = document.getElementById('pPass').value;
+        const btn = document.getElementById('lBtn');
+        if(ph.length >= 8 && pw.length >= 6) {
+            btn.disabled = false; btn.classList.add('active');
+        } else {
+            btn.disabled = true; btn.classList.remove('active');
+        }
+    }
+
+    function passTog() {
+        const p = document.getElementById('pPass');
+        p.type = p.type === 'password' ? 'text' : 'password';
+    }
+
+    async function gSign() {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        try {
+            await auth.signInWithPopup(provider);
+        } catch (e) {
+            alert("Firebase Error: " + e.message + "\n\nদয়া করে ফায়ারবেস কনসোলে Google Provider টি Enable করুন (আপনার শেষ স্ক্রিনশটের বাটনটি)।");
+        }
+    }
+
+    auth.onAuthStateChanged(user => {
+        const authUI = document.getElementById('authWrapper');
+        const profUI = document.getElementById('profileView');
+        if(user) {
+            authUI.style.display = 'none';
+            profUI.style.display = 'block';
+            document.getElementById('uDisplayName').innerText = user.displayName || "Pata User";
+            document.getElementById('uAvatar').src = user.photoURL || 'https://via.placeholder.com/150';
+            document.getElementById('uDisplayId').innerText = "ID: " + user.uid.substring(0,10).toUpperCase();
+        } else {
+            authUI.style.display = 'flex';
+            profUI.style.display = 'none';
+        }
+    });
 </script>
 
 </body>
 </html>
-

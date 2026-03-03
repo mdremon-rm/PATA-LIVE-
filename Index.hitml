@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Pata Live - Original Master Pro</title>
+    
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+    <script src="https://download.agora.io/sdk/release/AgoraRTC_N-4.18.0.js"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #FF2D55;
+            --secondary: #8E24AA;
+            --bg: #0b0118;
+            --card-bg: #1e1e30;
+            --text-gray: #b0b0b0;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: white; overflow-x: hidden; }
+
+        .app-shell { display: flex; flex-direction: column; min-height: 100vh; }
+
+        .top-bar { 
+            height: 60px; display: flex; align-items: center; justify-content: space-between; 
+            padding: 0 15px; background: var(--bg); position: sticky; top: 0; z-index: 1000; 
+        }
+        .header-tabs-container { flex: 1; overflow-x: auto; white-space: nowrap; scrollbar-width: none; }
+        .header-tabs { display: flex; gap: 20px; align-items: center; }
+        .h-tab { font-size: 15px; color: var(--text-gray); font-weight: 600; cursor: pointer; padding: 8px 0; position: relative; }
+        .h-tab.active { color: white; font-size: 17px; }
+        .h-tab.active::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 3px; background: var(--primary); border-radius: 10px; }
+
+        .banner-section { padding: 10px 15px; }
+        .banner-container { width: 100%; height: 140px; border-radius: 15px; overflow: hidden; }
+        .banner-track { display: flex; width: 300%; height: 100%; transition: 0.5s; }
+        .banner-track img { width: 33.33%; height: 100%; object-fit: cover; }
+
+        .screen-container { flex: 1; padding: 12px; padding-bottom: 100px; }
+        .feed-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .live-card { aspect-ratio: 1/1.25; border-radius: 20px; overflow: hidden; position: relative; background: var(--card-bg); border: 1px solid rgba(255,255,255,0.1); }
+        .live-card img { width: 100%; height: 100%; object-fit: cover; }
+        .live-tag { position: absolute; top: 10px; left: 10px; background: var(--primary); font-size: 9px; font-weight: 800; padding: 3px 8px; border-radius: 20px; z-index: 5; }
+        .card-footer { position: absolute; bottom: 0; width: 100%; padding: 12px; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); }
+
+        .bottom-nav-pro { 
+            position: fixed; bottom: 0; width: 100%; height: 80px; 
+            background: rgba(15, 2, 31, 0.98); backdrop-filter: blur(20px); 
+            display: flex; align-items: center; justify-content: space-evenly; 
+            border-top: 1px solid rgba(255, 255, 255, 0.1); z-index: 2000;
+        }
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-gray); font-size: 10px; cursor: pointer; min-width: 50px; }
+        .nav-item.active { color: var(--primary); }
+        .nav-item span { font-size: 24px; margin-bottom: 4px; }
+        
+        .nav-mic-btn { 
+            width: 65px; height: 65px; background: linear-gradient(45deg, var(--secondary), var(--primary)); 
+            border-radius: 50%; display: flex; align-items: center; justify-content: center; 
+            font-size: 30px; color: white; position: relative; top: -25px; 
+            border: 4px solid var(--bg); box-shadow: 0 8px 25px rgba(255, 45, 85, 0.5); 
+            cursor: pointer; z-index: 2001;
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-shell">
+    <div class="top-bar">
+        <div class="header-tabs-container">
+            <div class="header-tabs">
+                <div class="h-tab">Follow</div>
+                <div class="h-tab active">Popular</div>
+                <div class="h-tab">New</div>
+                <div class="h-tab">Explore</div>
+            </div>
+        </div>
+        <div style="display:flex; gap:15px; font-size:20px; padding-left:10px;">
+            <span>🏆</span>
+            <span>🔍</span>
+        </div>
+    </div>
+
+    <div class="banner-section">
+        <div class="banner-container">
+            <div class="banner-track" id="bTrack">
+                <img src="https://picsum.photos/seed/s1/800/400">
+                <img src="https://picsum.photos/seed/s2/800/400">
+                <img src="https://picsum.photos/seed/s3/800/400">
+            </div>
+        </div>
+    </div>
+
+    <div class="screen-container">
+        <div class="feed-grid" id="gridPopular"></div>
+    </div>
+
+    <nav class="bottom-nav-pro">
+        <div class="nav-item active">
+            <span>🏠</span>
+            Home
+        </div>
+        <div class="nav-item">
+            <span>🕒</span>
+            History
+        </div>
+        
+        <div class="nav-mic-btn" onclick="startLive()">🎙️</div>
+        
+        <div class="nav-item">
+            <span>💬</span>
+            Message
+        </div>
+        <div class="nav-item">
+            <span>👤</span>
+            Me
+        </div>
+    </nav>
+</div>
+
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyD5vRGyz3qdyqhnt2T9qmlPlTeQKV5Hlbw",
+        authDomain: "pata-live.firebaseapp.com",
+        databaseURL: "https://pata-live-default-rtdb.firebaseio.com/",
+        projectId: "pata-live",
+        storageBucket: "pata-live.firebasestorage.app",
+        messagingSenderId: "644016212127",
+        appId: "1:644016212127:web:214bc06f4677c8188e7aaa"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+
+    let step = 0;
+    setInterval(() => {
+        step = (step + 1) % 3;
+        const track = document.getElementById('bTrack');
+        if(track) track.style.transform = `translateX(-${step * 33.33}%)`;
+    }, 3000);
+
+    database.ref('live_rooms').on('value', (snap) => {
+        const grid = document.getElementById('gridPopular');
+        if(!grid) return;
+        grid.innerHTML = '';
+        const data = snap.val();
+        if(data){
+            Object.keys(data).forEach(key => {
+                const room = data[key];
+                grid.innerHTML += `
+                    <div class="live-card">
+                        <img src="https://picsum.photos/seed/${key}/400/500">
+                        <div class="live-tag">LIVE</div>
+                        <div class="card-footer">
+                            <div style="font-weight:700;">${room.name}</div>
+                            <div style="font-size:10px; color:#bbb;">Host: ${room.host}</div>
+                        </div>
+                    </div>`;
+            });
+        }
+    });
+
+    async function startLive() {
+        const name = prompt("রুমের নাম:");
+        if(name) {
+            database.ref('live_rooms').push({name: name, host: "MD:Ayan"});
+            alert("লাইভ শুরু হয়েছে!");
+        }
+    }
+</script>
+
+</body>
+</html>

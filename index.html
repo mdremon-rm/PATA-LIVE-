@@ -3,19 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Pata Live - Professional Audio Room</title>
+    <title>Pata Live - Original Pro UI</title>
     
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
         :root {
             --primary: #FF2D55;
-            --secondary: #8E24AA;
             --bg: #0b0118;
             --glass: rgba(255, 255, 255, 0.75);
             --gold: #FFD700;
@@ -24,11 +23,11 @@
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
         body { font-family: 'Poppins', sans-serif; background: var(--bg); color: white; overflow: hidden; height: 100vh; width: 100vw; }
 
-        /* --- লগইন স্ক্রিন (অরিজিনাল গ্লাস ইফেক্ট অক্ষত) --- */
+        /* --- লগইন স্ক্রিন (আপনার অরিজিনাল গ্লাস ইফেক্ট ও স্টাইল হুবহু রাখা হয়েছে) --- */
         #auth-screen { 
             position: fixed; inset: 0; 
             background: linear-gradient(180deg, #A4C1FF 0%, #E2EDFF 40%, #FFFFFF 100%);
-            display: flex; flex-direction: column; align-items: center; z-index: 9999;
+            display: flex; flex-direction: column; align-items: center; z-index: 10000;
             padding: 40px 20px;
         }
         .logo-wrapper {
@@ -44,147 +43,149 @@
         }
         .prefix { display: flex; align-items: center; gap: 8px; padding-right: 12px; border-right: 1px solid rgba(0,0,0,0.1); font-weight: 700; color: #333; }
         .glass-field input { flex: 1; border: none; outline: none; font-size: 15px; background: transparent; padding: 0 15px; color: #111; }
-        .login-btn { width: 100%; max-width: 400px; height: 55px; border-radius: 50px; border: none; background: var(--primary); color: #fff; font-size: 16px; font-weight: 700; margin-top: 10px; box-shadow: 0 5px 15px rgba(255,45,85,0.3); }
+        .login-btn { width: 100%; max-width: 400px; height: 55px; border-radius: 50px; border: none; background: var(--primary); color: #fff; font-size: 16px; font-weight: 700; margin-top: 10px; }
         .social-row { display: flex; gap: 20px; margin-top: 25px; }
         .social-circle { width: 50px; height: 50px; background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 5px 15px rgba(0,0,0,0.08); cursor: pointer; }
 
-        /* --- মেইন অ্যাপ হোম স্ক্রিন --- */
+        /* --- মেইন হোম স্ক্রিন --- */
         .app-shell { display: none; flex-direction: column; height: 100vh; background: var(--bg); }
-        .top-nav-home { padding: 15px; font-size: 22px; font-weight: 800; background: var(--bg); border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .top-nav-home { padding: 15px; font-size: 20px; font-weight: 800; display: flex; justify-content: space-between; align-items: center; }
         .feed-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 12px; flex: 1; overflow-y: auto; padding-bottom: 100px; }
-        .live-card { aspect-ratio: 1/1.2; border-radius: 18px; overflow: hidden; position: relative; background: #1e1e30; border: 1px solid rgba(255,255,255,0.05); }
+        .live-card { aspect-ratio: 1/1.2; border-radius: 15px; overflow: hidden; position: relative; background: #1e1e30; border: 1px solid rgba(255,255,255,0.05); }
         .live-card img { width: 100%; height: 100%; object-fit: cover; }
-        .card-info { position: absolute; bottom: 0; width: 100%; padding: 10px; background: linear-gradient(transparent, rgba(0,0,0,0.9)); }
+        .card-info { position: absolute; bottom: 0; width: 100%; padding: 8px; background: linear-gradient(transparent, rgba(0,0,0,0.8)); }
 
-        /* --- অডিও রুম ইন্টারফেস (Poppo Style) --- */
+        /* --- অডিও রুম ইন্টারফেস (Poppo Style সংশোধিত) --- */
         #room-view { 
             position: fixed; inset: 0; 
-            background: linear-gradient(to bottom, #1a0b2e, #0b0118); 
-            z-index: 8000; display: none; flex-direction: column;
+            background: linear-gradient(to bottom, #2a0b4a, #0b0118); 
+            z-index: 9000; display: none; flex-direction: column;
         }
         
-        .r-header { height: 70px; display: flex; align-items: center; justify-content: space-between; padding: 0 15px; margin-top: 5px; }
-        .r-host-box { display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.4); padding: 5px 15px; border-radius: 40px; border: 1px solid rgba(255,255,255,0.1); }
+        .r-header { height: 70px; display: flex; align-items: center; justify-content: space-between; padding: 0 15px; margin-top: 10px; }
+        .r-host-box { display: flex; align-items: center; gap: 8px; background: rgba(0,0,0,0.3); padding: 5px 12px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.1); }
         .r-host-img { width: 38px; height: 38px; border-radius: 50%; border: 2px solid var(--gold); }
-        .r-host-info span:first-child { font-size: 13px; font-weight: 700; color: white; display: block; }
-        .r-host-info span:last-child { font-size: 10px; color: var(--gold); font-weight: 600; }
+        .r-host-info span { display: block; }
+        .host-n { font-size: 12px; font-weight: 700; }
+        .host-i { font-size: 9px; color: var(--gold); }
 
-        /* সিট গ্রিড (৩x৩ লেআউট) */
+        /* সিট গ্রিড (৩x৩ লেআউট - যেমনটি স্ক্রিনশটে আছে) */
         .seat-grid { 
             display: grid; grid-template-columns: repeat(3, 1fr); 
-            gap: 20px; padding: 20px; width: 100%; max-width: 380px; 
-            margin: 20px auto; flex-shrink: 0;
+            gap: 15px; padding: 20px; width: 100%; max-width: 400px; 
+            margin: 10px auto; flex-shrink: 0;
         }
         .seat { display: flex; flex-direction: column; align-items: center; cursor: pointer; }
         .seat-frame { 
-            width: 75px; height: 75px; border-radius: 15px; 
-            background: rgba(255,255,255,0.06); border: 2px dashed rgba(255,255,255,0.1);
+            width: 78px; height: 78px; border-radius: 12px; 
+            background: rgba(255,255,255,0.05); border: 1.5px dashed rgba(255,255,255,0.15);
             display: flex; align-items: center; justify-content: center; position: relative;
-            transition: all 0.2s ease;
         }
-        .seat-frame.occupied { border: 2.5px solid var(--gold); background: rgba(255, 215, 0, 0.1); border-style: solid; box-shadow: 0 0 15px rgba(255,215,0,0.2); }
-        .seat-frame img.user-pic { width: 100%; height: 100%; border-radius: 12px; object-fit: cover; }
-        .crown-icon { position: absolute; top: -18px; width: 35px; z-index: 2; display: none; }
-        .seat-frame.occupied .crown-icon { display: block; }
+        .seat-frame.occupied { border: 2px solid var(--gold); background: rgba(255, 215, 0, 0.05); border-style: solid; }
+        .user-avatar { width: 100%; height: 100%; border-radius: 10px; object-fit: cover; }
+        .crown-asset { position: absolute; top: -16px; width: 32px; display: none; z-index: 5; }
+        .seat-frame.occupied .crown-asset { display: block; }
         
-        .seat-index { position: absolute; bottom: -5px; background: rgba(0,0,0,0.8); font-size: 10px; padding: 2px 7px; border-radius: 10px; color: #fff; border: 1px solid rgba(255,255,255,0.2); }
-        .seat-name { margin-top: 12px; font-size: 11px; color: #ccc; font-weight: 500; text-align: center; width: 85px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+        .seat-num { position: absolute; bottom: -5px; background: rgba(0,0,0,0.8); font-size: 10px; padding: 1px 6px; border-radius: 8px; color: white; border: 0.5px solid rgba(255,255,255,0.2); }
+        .seat-name { margin-top: 10px; font-size: 11px; color: #bbb; text-align: center; width: 80px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 
         /* চ্যাট এরিয়া */
-        .room-chat { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
-        .chat-bubble { background: rgba(0,0,0,0.3); padding: 8px 15px; border-radius: 18px; width: fit-content; max-width: 85%; font-size: 13px; border-left: 3px solid var(--primary); }
-        .chat-bubble b { color: var(--gold); margin-right: 5px; }
+        .room-chat { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; }
+        .msg-box { background: rgba(0,0,0,0.2); padding: 6px 12px; border-radius: 15px; font-size: 13px; width: fit-content; max-width: 85%; }
+        .msg-box b { color: var(--gold); margin-right: 5px; }
 
-        /* ফুটার কন্ট্রোল */
-        .r-footer { height: 80px; display: flex; align-items: center; justify-content: space-around; padding: 0 10px; background: rgba(0,0,0,0.6); border-top: 1px solid rgba(255,255,255,0.05); }
-        .ctrl-icon { width: 48px; height: 48px; border-radius: 50%; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 22px; cursor: pointer; }
-        .gift-box-btn { width: 65px; height: 65px; background: linear-gradient(45deg, #FF2D55, #8E24AA); border-radius: 50%; font-size: 32px; box-shadow: 0 6px 20px rgba(255, 45, 85, 0.5); }
+        /* রুম ফুটার কন্ট্রোল */
+        .r-footer { height: 75px; display: flex; align-items: center; justify-content: space-around; padding: 0 10px; background: rgba(0,0,0,0.4); border-top: 1px solid rgba(255,255,255,0.05); }
+        .r-btn { width: 45px; height: 45px; border-radius: 50%; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 22px; cursor: pointer; }
+        .r-gift { width: 60px; height: 60px; background: linear-gradient(45deg, #f32c56, #8e24aa); border-radius: 50%; font-size: 30px; box-shadow: 0 5px 15px rgba(243, 44, 86, 0.4); }
 
-        /* বটম ন্যাভ */
-        .nav-bar { position: fixed; bottom: 0; width: 100%; height: 75px; background: #0f021f; display: flex; align-items: center; justify-content: space-around; border-top: 1px solid rgba(255,255,255,0.1); z-index: 100; }
-        .nav-link { color: #888; font-size: 10px; text-align: center; font-weight: 600; text-decoration: none; }
-        .nav-link.active { color: var(--primary); }
-        .mic-btn-center { width: 62px; height: 62px; background: linear-gradient(45deg, #8E24AA, #FF2D55); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; margin-top: -35px; border: 5px solid var(--bg); box-shadow: 0 8px 20px rgba(255,45,85,0.4); cursor: pointer; }
+        /* বটম নেভিগেশন */
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; height: 75px; background: #0f021f; display: flex; align-items: center; justify-content: space-around; border-top: 1px solid rgba(255,255,255,0.1); }
+        .nav-tab { color: #888; font-size: 10px; text-align: center; font-weight: 600; }
+        .nav-tab.active { color: var(--primary); }
+        .center-mic { width: 60px; height: 60px; background: linear-gradient(45deg, #8E24AA, #FF2D55); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; margin-top: -35px; border: 5px solid var(--bg); box-shadow: 0 5px 15px rgba(255,45,85,0.3); }
     </style>
 </head>
 <body>
 
-<!-- Login Screen -->
+<!-- Original Login Screen -->
 <div id="auth-screen">
     <div class="logo-wrapper"><img src="https://i.ibb.co/VYpYmRj/pata-logo.png" width="70"></div>
     <h1 class="app-name">Pata Live</h1>
     <div class="glass-field">
         <div class="prefix">🇧🇩<span>+880</span></div>
-        <input type="tel" id="userPhone" placeholder="Phone Number">
+        <input type="tel" placeholder="Phone Number">
     </div>
-    <div class="glass-field"><input type="password" id="userPass" placeholder="Password"></div>
-    <button class="login-btn" onclick="gLogin()">Log in with Google</button>
-    
-    <div style="margin: 25px 0; color: #555; font-size: 14px; font-weight: 600;">Or login with</div>
+    <div class="glass-field"><input type="password" placeholder="Password"></div>
+    <button class="login-btn" onclick="googleSignIn()">Log in with Google</button>
+    <div style="margin: 20px 0; color: #555; font-size: 14px; font-weight: 600;">Or login with</div>
     <div class="social-row">
-        <div class="social-circle" onclick="gLogin()"><img src="https://www.gstatic.com/images/branding/product/1x/googleg_48dp.png" width="28"></div>
+        <div class="social-circle" onclick="googleSignIn()"><img src="https://www.gstatic.com/images/branding/product/1x/googleg_48dp.png" width="28"></div>
         <div class="social-circle"><img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/2021_Facebook_icon.svg" width="28"></div>
     </div>
 </div>
 
 <!-- Home Screen -->
 <div class="app-shell" id="app-shell">
-    <div class="top-nav-home">Pata Live</div>
-    <div id="room-list" class="feed-grid"></div>
+    <div class="top-nav-home">
+        <span>Pata Live</span>
+        <span style="font-size: 16px;">🔍 🏆</span>
+    </div>
+    <div id="roomList" class="feed-grid"></div>
     
-    <div class="nav-bar">
-        <div class="nav-link active">🏠<br>Home</div>
-        <div class="nav-link">🕒<br>Explore</div>
-        <div class="mic-btn-center" onclick="createMyRoom()">🎙️</div>
-        <div class="nav-link">💬<br>Chat</div>
-        <div class="nav-link">👤<br>Me</div>
+    <div class="bottom-nav">
+        <div class="nav-tab active">🏠<br>Home</div>
+        <div class="nav-tab">🕒<br>Explore</div>
+        <div class="center-mic" onclick="createRoom()">🎙️</div>
+        <div class="nav-tab">💬<br>Chat</div>
+        <div class="nav-tab">👤<br>Me</div>
     </div>
 </div>
 
-<!-- PROFESSIONAL AUDIO ROOM (Fixed Black Screen) -->
+<!-- PROFESSIONAL AUDIO ROOM (Poppo Inspired) -->
 <div id="room-view">
     <div class="r-header">
         <div class="r-host-box">
             <img id="host-avatar" class="r-host-img" src="">
             <div class="r-host-info">
-                <span id="host-display-name">Host Name</span>
-                <span id="room-id-text">ID: 00000</span>
+                <span id="host-name" class="host-n">Host Name</span>
+                <span id="room-id-label" class="host-i">ID: 00000</span>
             </div>
         </div>
         <div style="display:flex; gap:12px; align-items:center;">
-            <div style="background:rgba(255,255,255,0.15); padding:5px 12px; border-radius:20px; font-size:12px; font-weight:700;">👥 1.4k</div>
-            <div onclick="leaveRoom()" style="font-size:26px; padding:5px; cursor:pointer;">✕</div>
+            <div style="background:rgba(255,255,255,0.1); padding:4px 12px; border-radius:20px; font-size:12px;">👥 1.2k</div>
+            <div onclick="exitRoom()" style="font-size:24px; padding:5px; cursor:pointer;">✕</div>
         </div>
     </div>
 
-    <!-- ৩x৩ সিট গ্রিড (Poppo Style) -->
-    <div class="seat-grid" id="seat-grid-container">
+    <!-- ৩x৩ সিট গ্রিড -->
+    <div class="seat-grid">
         <script>
             for(let i=1; i<=9; i++) {
                 document.write(`
-                    <div class="seat" onclick="claimSeat(${i})">
-                        <div class="seat-frame" id="frame-${i}">
-                            <img src="https://i.ibb.co/h97p68X/crown.png" class="crown-icon">
-                            <span style="font-size:22px; opacity:0.25;">🛋️</span>
-                            <div class="seat-index">${i}</div>
+                    <div class="seat" onclick="toggleUserSeat(${i})">
+                        <div class="seat-frame" id="seat-${i}">
+                            <img src="https://i.ibb.co/h97p68X/crown.png" class="crown-asset">
+                            <span style="font-size:22px; opacity:0.2;">🛋️</span>
+                            <div class="seat-num">${i}</div>
                         </div>
-                        <div class="seat-name" id="label-${i}">Join</div>
+                        <div class="seat-name" id="seat-name-${i}">Join</div>
                     </div>
                 `);
             }
         </script>
     </div>
 
-    <div class="room-chat" id="room-chat-msgs">
-        <div class="chat-bubble"><b>System:</b> Welcome to the audio party! Be respectful to others.</div>
+    <div class="room-chat" id="chatMessages">
+        <div class="msg-box"><b>System:</b> Welcome! Follow the rules and enjoy the party.</div>
     </div>
 
     <div class="r-footer">
-        <div class="ctrl-icon" onclick="toggleMute()">🎙️</div>
-        <div class="ctrl-icon">💬</div>
-        <div class="gift-box-btn" onclick="alert('Opening Gifting Store...')">🎁</div>
-        <div class="ctrl-icon">🎵</div>
-        <div class="ctrl-icon">⚙️</div>
+        <div class="r-btn" onclick="toggleMic()">🎙️</div>
+        <div class="r-btn">💬</div>
+        <div class="r-gift" onclick="alert('Opening Gift Shop...')">🎁</div>
+        <div class="r-btn">🎵</div>
+        <div class="r-btn">⚙️</div>
     </div>
 </div>
 
@@ -205,7 +206,7 @@
 
     let activeRoomId = null;
 
-    function gLogin() {
+    function googleSignIn() {
         const provider = new firebase.auth.GoogleAuthProvider();
         auth.signInWithPopup(provider);
     }
@@ -214,101 +215,102 @@
         if(user) {
             document.getElementById('auth-screen').style.display = 'none';
             document.getElementById('app-shell').style.display = 'flex';
-            initRoomListener();
+            fetchRooms();
         } else {
             document.getElementById('auth-screen').style.display = 'flex';
             document.getElementById('app-shell').style.display = 'none';
         }
     });
 
-    function initRoomListener() {
-        db.ref('party_rooms').on('value', snap => {
-            const list = document.getElementById('room-list');
+    function fetchRooms() {
+        db.ref('pata_rooms').on('value', snap => {
+            const list = document.getElementById('roomList');
             list.innerHTML = '';
             snap.forEach(child => {
                 const room = child.val();
                 list.innerHTML += `
-                    <div class="live-card" onclick="openRoom('${child.key}')">
-                        <img src="${room.hostPic}">
+                    <div class="live-card" onclick="joinRoom('${child.key}')">
+                        <img src="${room.hostAvatar}">
                         <div class="card-info">
-                            <div style="font-weight:700; font-size:14px;">${room.title}</div>
-                            <div style="font-size:10px; color:#ddd;">${room.hostName}</div>
+                            <div style="font-weight:700; font-size:14px;">${room.roomTitle}</div>
+                            <div style="font-size:10px; color:#ccc;">${room.hostName}</div>
                         </div>
                     </div>`;
             });
         });
     }
 
-    function createMyRoom() {
+    function createRoom() {
         const user = auth.currentUser;
         const rid = Math.floor(10000 + Math.random() * 90000);
-        db.ref('party_rooms/' + rid).set({
-            title: user.displayName + "'s Party",
+        db.ref('pata_rooms/' + rid).set({
+            roomTitle: user.displayName + "'s Party",
             hostName: user.displayName,
-            hostPic: user.photoURL,
-            seats: { 1: { uid: user.uid, name: user.displayName, pic: user.photoURL } }
+            hostAvatar: user.photoURL,
+            seats: { 1: { uid: user.uid, name: user.displayName, avatar: user.photoURL } }
         });
-        openRoom(rid);
+        joinRoom(rid);
     }
 
-    function openRoom(id) {
+    function joinRoom(id) {
         activeRoomId = id;
         document.getElementById('room-view').style.display = 'flex';
         
-        db.ref('party_rooms/' + id).on('value', snap => {
+        db.ref('pata_rooms/' + id).on('value', snap => {
             const data = snap.val();
             if(!data) return;
             
-            document.getElementById('host-avatar').src = data.hostPic;
-            document.getElementById('host-display-name').innerText = data.hostName;
-            document.getElementById('room-id-text').innerText = "ID: " + id;
+            document.getElementById('host-avatar').src = data.hostAvatar;
+            document.getElementById('host-name').innerText = data.hostName;
+            document.getElementById('room-id-label').innerText = "ID: " + id;
 
             for(let i=1; i<=9; i++) {
-                const seatInfo = data.seats ? data.seats[i] : null;
-                const frame = document.getElementById('frame-'+i);
-                const label = document.getElementById('label-'+i);
+                const seat = data.seats ? data.seats[i] : null;
+                const frame = document.getElementById('seat-'+i);
+                const nameLabel = document.getElementById('seat-name-'+i);
                 
-                if(seatInfo) {
-                    frame.innerHTML = `<img src="https://i.ibb.co/h97p68X/crown.png" class="crown-icon" style="display:block"><img src="${seatInfo.pic}" class="user-pic"><div class="seat-index">${i}</div>`;
+                if(seat) {
+                    frame.innerHTML = `<img src="https://i.ibb.co/h97p68X/crown.png" class="crown-asset" style="display:block"><img src="${seat.avatar}" class="user-avatar"><div class="seat-num">${i}</div>`;
                     frame.classList.add('occupied');
-                    label.innerText = seatInfo.name;
+                    nameLabel.innerText = seat.name;
                 } else {
-                    frame.innerHTML = `<span style="font-size:22px; opacity:0.25;">🛋️</span><div class="seat-index">${i}</div>`;
+                    frame.innerHTML = `<span style="font-size:22px; opacity:0.2;">🛋️</span><div class="seat-num">${i}</div>`;
                     frame.classList.remove('occupied');
-                    label.innerText = "Join";
+                    nameLabel.innerText = "Join";
                 }
             }
         });
     }
 
-    function claimSeat(num) {
+    function toggleUserSeat(num) {
         const user = auth.currentUser;
-        const seatRef = db.ref('party_rooms/' + activeRoomId + '/seats/' + num);
+        const seatRef = db.ref('pata_rooms/' + activeRoomId + '/seats/' + num);
         
         seatRef.once('value', snap => {
             if(snap.exists() && snap.val().uid === user.uid) {
-                seatRef.remove(); // Leave seat
+                seatRef.remove(); // সিট ছেড়ে দেওয়া
             } else if(!snap.exists()) {
-                // Remove from other seats first
-                db.ref('party_rooms/' + activeRoomId + '/seats').once('value', sSnap => {
+                // অন্য সব সিট থেকে আগে নিজেকে রিমুভ করা
+                db.ref('pata_rooms/' + activeRoomId + '/seats').once('value', sSnap => {
                     sSnap.forEach(c => { if(c.val().uid === user.uid) c.ref.remove(); });
-                    seatRef.set({ uid: user.uid, name: user.displayName, pic: user.photoURL });
+                    seatRef.set({ uid: user.uid, name: user.displayName, avatar: user.photoURL });
                 });
             }
         });
     }
 
-    function toggleMute() {
+    function toggleMic() {
         const btn = event.currentTarget;
-        btn.style.background = btn.style.background === 'rgb(255, 45, 85)' ? 'rgba(255,255,255,0.1)' : 'rgb(255, 45, 85)';
+        btn.style.color = btn.style.color === 'red' ? 'white' : 'red';
+        // অডিও কন্ট্রোল লজিক এখানে যুক্ত করা যাবে
     }
 
-    function leaveRoom() {
+    function exitRoom() {
         if(activeRoomId) {
-            db.ref('party_rooms/' + activeRoomId + '/seats').once('value', snap => {
+            db.ref('pata_rooms/' + activeRoomId + '/seats').once('value', snap => {
                 snap.forEach(c => { if(c.val().uid === auth.currentUser.uid) c.ref.remove(); });
             });
-            db.ref('party_rooms/' + activeRoomId).off();
+            db.ref('pata_rooms/' + activeRoomId).off();
         }
         document.getElementById('room-view').style.display = 'none';
         activeRoomId = null;

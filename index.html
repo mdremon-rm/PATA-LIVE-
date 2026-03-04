@@ -2,206 +2,246 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pata Live - Original Premium</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Pata Live - Original Master Pro</title>
     
-    <!-- Firebase Legacy SDKs for maximum compatibility -->
+    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+    <script src="https://download.agora.io/sdk/release/AgoraRTC_N-4.18.0.js"></script>
 
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
     
     <style>
         :root {
             --primary: #FF2D55;
-            --accent: #8E24AA;
+            --secondary: #8E24AA;
             --bg: #0b0118;
-            --glass: rgba(255, 255, 255, 0.1);
+            --card-bg: #1e1e30;
+            --text-gray: #b0b0b0;
             --gold: #FFD700;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: white; overflow: hidden; height: 100vh; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: white; overflow-x: hidden; height: 100vh; }
 
-        /* --- লগইন স্ক্রিন --- */
-        #auth-screen { 
-            position: fixed; inset: 0; 
-            background: linear-gradient(180deg, #1a0b2e 0%, #0b0118 100%);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            z-index: 10000; padding: 30px;
+        /* --- AUTH & PROFILE SCREENS --- */
+        #auth-screen, #profile-setup {
+            position: fixed; inset: 0; background: var(--bg); z-index: 5000;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px;
         }
-        .logo-box {
-            width: 110px; height: 110px; background: white; border-radius: 30px;
-            display: flex; align-items: center; justify-content: center;
-            margin-bottom: 20px; box-shadow: 0 0 30px rgba(255, 45, 85, 0.4);
-            border: 4px solid var(--primary);
+        .glass-input {
+            width: 100%; max-width: 320px; height: 50px; background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 0 15px;
+            color: white; margin-bottom: 15px; outline: none;
         }
-        .input-group { width: 100%; max-width: 350px; margin-bottom: 15px; }
-        .input-group input {
-            width: 100%; height: 55px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.1);
-            background: var(--glass); color: white; padding: 0 20px; font-size: 16px; outline: none;
-        }
-        .btn-primary {
-            width: 100%; max-width: 350px; height: 55px; border-radius: 15px; border: none;
-            background: linear-gradient(45deg, var(--primary), var(--accent));
-            color: white; font-weight: 700; font-size: 16px; cursor: pointer;
+        .btn-main {
+            width: 100%; max-width: 320px; height: 50px; border-radius: 12px; border: none;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: white; font-weight: 700; cursor: pointer;
         }
 
-        /* --- অ্যাপ ইউআই --- */
-        .header { display: flex; justify-content: space-between; align-items: center; padding: 20px; }
-        .header h1 { font-size: 24px; font-weight: 800; background: linear-gradient(to right, #fff, #aaa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        /* --- UI SHELL --- */
+        .app-shell { display: flex; flex-direction: column; min-height: 100vh; }
 
-        .banner-slider { padding: 0 20px; margin-bottom: 20px; }
-        .banner { width: 100%; height: 150px; border-radius: 20px; background: linear-gradient(45deg, #4158D0, #C850C0); overflow: hidden; position: relative; }
-
-        .room-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 20px; overflow-y: auto; height: calc(100vh - 250px); padding-bottom: 100px; }
-        .room-card { 
-            background: var(--glass); border-radius: 20px; overflow: hidden; position: relative; 
-            border: 1px solid rgba(255,255,255,0.05); aspect-ratio: 1/1.2;
+        .top-bar { 
+            height: 60px; display: flex; align-items: center; justify-content: space-between; 
+            padding: 0 15px; background: var(--bg); position: sticky; top: 0; z-index: 1000; 
         }
-        .room-card img { width: 100%; height: 100%; object-fit: cover; }
-        .room-meta { position: absolute; bottom: 0; width: 100%; padding: 12px; background: linear-gradient(transparent, rgba(0,0,0,0.9)); }
+        .header-tabs-container { flex: 1; overflow-x: auto; white-space: nowrap; scrollbar-width: none; }
+        .header-tabs { display: flex; gap: 20px; align-items: center; }
+        .h-tab { font-size: 15px; color: var(--text-gray); font-weight: 600; cursor: pointer; padding: 8px 0; position: relative; }
+        .h-tab.active { color: white; font-size: 17px; }
+        .h-tab.active::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 3px; background: var(--primary); border-radius: 10px; }
 
-        /* বটম নেভিগেশন */
-        .bottom-nav { 
-            position: fixed; bottom: 0; width: 100%; height: 85px; 
-            background: rgba(15, 2, 31, 0.95); backdrop-filter: blur(20px);
-            display: flex; align-items: center; justify-content: space-around;
-            border-top: 1px solid rgba(255,255,255,0.08); z-index: 1000;
+        .banner-section { padding: 10px 15px; }
+        .banner-container { width: 100%; height: 140px; border-radius: 15px; overflow: hidden; }
+        .banner-track { display: flex; width: 300%; height: 100%; transition: 0.5s; }
+        .banner-track img { width: 33.33%; height: 100%; object-fit: cover; }
+
+        .screen-container { flex: 1; padding: 12px; padding-bottom: 100px; overflow-y: auto; }
+        .feed-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .live-card { aspect-ratio: 1/1.25; border-radius: 20px; overflow: hidden; position: relative; background: var(--card-bg); border: 1px solid rgba(255,255,255,0.1); }
+        .live-card img { width: 100%; height: 100%; object-fit: cover; }
+        .live-tag { position: absolute; top: 10px; left: 10px; background: var(--primary); font-size: 9px; font-weight: 800; padding: 3px 8px; border-radius: 20px; z-index: 5; }
+        .card-footer { position: absolute; bottom: 0; width: 100%; padding: 12px; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); }
+
+        /* --- BOTTOM NAV --- */
+        .bottom-nav-pro { 
+            position: fixed; bottom: 0; width: 100%; height: 80px; 
+            background: rgba(15, 2, 31, 0.98); backdrop-filter: blur(20px); 
+            display: flex; align-items: center; justify-content: space-evenly; 
+            border-top: 1px solid rgba(255, 255, 255, 0.1); z-index: 2000;
         }
-        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 5px; color: #888; font-size: 11px; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-gray); font-size: 10px; cursor: pointer; min-width: 50px; }
         .nav-item.active { color: var(--primary); }
-        .nav-item i { font-size: 24px; }
-        .mic-btn { 
-            width: 60px; height: 60px; border-radius: 50%; 
-            background: linear-gradient(45deg, var(--primary), var(--accent));
-            display: flex; align-items: center; justify-content: center;
-            margin-top: -40px; border: 5px solid var(--bg); font-size: 28px;
-            box-shadow: 0 10px 20px rgba(255,45,85,0.3);
+        .nav-item span { font-size: 24px; margin-bottom: 4px; }
+        
+        .nav-mic-btn { 
+            width: 65px; height: 65px; background: linear-gradient(45deg, var(--secondary), var(--primary)); 
+            border-radius: 50%; display: flex; align-items: center; justify-content: center; 
+            font-size: 30px; color: white; position: relative; top: -25px; 
+            border: 4px solid var(--bg); box-shadow: 0 8px 25px rgba(255, 45, 85, 0.5); 
+            cursor: pointer; z-index: 2001;
         }
 
-        /* অডিও রুম ভিউ */
-        #room-view { position: fixed; inset: 0; background: #120227; z-index: 9000; display: none; flex-direction: column; }
-        .room-top { display: flex; justify-content: space-between; padding: 20px; align-items: center; }
-        .host-info { background: rgba(0,0,0,0.3); padding: 5px 15px; border-radius: 30px; display: flex; align-items: center; gap: 10px; border: 1px solid rgba(255,255,255,0.1); }
-        .host-info img { width: 35px; height: 35px; border-radius: 50%; border: 2px solid var(--gold); }
+        /* --- AUDIO ROOM UI (Poppo Style) --- */
+        #audio-room {
+            position: fixed; inset: 0; background: linear-gradient(to bottom, #1e0836, #0b0118);
+            z-index: 6000; display: none; flex-direction: column;
+        }
+        .room-header { height: 70px; display: flex; align-items: center; justify-content: space-between; padding: 0 15px; margin-top: 10px; }
+        .host-pill { background: rgba(0,0,0,0.3); border-radius: 30px; padding: 5px 12px; display: flex; align-items: center; gap: 8px; border: 1px solid rgba(255,255,255,0.1); }
+        .host-pill img { width: 35px; height: 35px; border-radius: 50%; border: 2px solid var(--gold); }
         
         .seats-grid { 
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; 
-            padding: 30px; flex: 1; align-content: flex-start;
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; 
+            padding: 20px; max-width: 400px; margin: 0 auto;
         }
-        .seat { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+        .seat-box { display: flex; flex-direction: column; align-items: center; gap: 5px; }
         .seat-circle { 
-            width: 80px; height: 80px; border-radius: 20px; background: rgba(255,255,255,0.03); 
-            border: 1.5px dashed rgba(255,255,255,0.1); display: flex; align-items: center; 
-            justify-content: center; position: relative; transition: 0.3s;
+            width: 80px; height: 80px; border-radius: 18px; background: rgba(255,255,255,0.05); 
+            border: 1.5px dashed rgba(255,255,255,0.15); display: flex; align-items: center; 
+            justify-content: center; position: relative; overflow: visible;
         }
-        .seat-circle.active { border: 2px solid var(--gold); border-style: solid; background: rgba(255,255,255,0.08); }
-        .seat-circle img { width: 100%; height: 100%; border-radius: 18px; object-fit: cover; }
-        .crown { position: absolute; top: -12px; width: 25px; }
-        
-        .chat-area { height: 150px; padding: 15px; overflow-y: auto; background: linear-gradient(transparent, rgba(0,0,0,0.4)); }
-        .msg { font-size: 13px; margin-bottom: 5px; color: #ddd; }
-        .msg b { color: var(--gold); }
+        .seat-circle.active { border: 2.5px solid var(--gold); border-style: solid; background: rgba(0,0,0,0.2); }
+        .seat-circle img.user-avatar { width: 100%; height: 100%; border-radius: 15px; object-fit: cover; }
+        .crown-icon { position: absolute; top: -15px; width: 30px; display: none; }
+        .seat-circle.active .crown-icon { display: block; }
+        .seat-num { position: absolute; bottom: -5px; background: rgba(0,0,0,0.8); font-size: 10px; padding: 1px 7px; border-radius: 8px; border: 0.5px solid rgba(255,255,255,0.2); }
 
-        .room-actions { height: 80px; display: flex; align-items: center; justify-content: space-around; padding: 0 15px; }
-        .act-btn { width: 45px; height: 45px; border-radius: 50%; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 20px; }
-        
-        #error-popup {
-            position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
-            background: #ff4d4d; color: white; padding: 12px 25px; border-radius: 10px;
-            z-index: 11000; display: none; font-size: 14px; font-weight: 600;
-        }
+        .chat-container { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
+        .chat-bubble { background: rgba(0,0,0,0.2); padding: 8px 15px; border-radius: 15px; font-size: 13px; max-width: 85%; }
+        .chat-bubble b { color: var(--gold); margin-right: 5px; }
+
+        .room-footer { height: 80px; display: flex; align-items: center; justify-content: space-around; padding: 0 10px; background: rgba(0,0,0,0.4); }
+        .room-btn { width: 45px; height: 45px; border-radius: 50%; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 20px; }
+        .gift-btn { width: 60px; height: 60px; background: linear-gradient(45deg, var(--primary), var(--secondary)); border-radius: 50%; font-size: 30px; box-shadow: 0 0 20px rgba(255,45,85,0.4); }
     </style>
 </head>
 <body>
 
-<div id="error-popup">Network Error! Please check Firebase Settings.</div>
-
-<!-- Auth Section -->
+<!-- Login Screen -->
 <div id="auth-screen">
-    <div class="logo-box"><img src="https://i.ibb.co/VYpYmRj/pata-logo.png" width="80"></div>
-    <h1 style="margin-bottom: 30px; font-weight: 800;">Pata Live</h1>
-    <div class="input-group"><input type="email" id="email" placeholder="Email Address"></div>
-    <div class="input-group"><input type="password" id="pass" placeholder="Password"></div>
-    <button class="btn-primary" onclick="handleLogin()">Sign In / Sign Up</button>
-    <p style="margin-top: 20px; color: #666; font-size: 12px;">Secure Authentication by Firebase</p>
+    <div style="margin-bottom:30px; text-align:center;">
+        <h1 style="font-size:32px; font-weight:900;">Pata Live</h1>
+        <p style="color:var(--text-gray);">Join the Voice Party</p>
+    </div>
+    <input type="email" id="email" class="glass-input" placeholder="Email Address">
+    <input type="password" id="pass" class="glass-input" placeholder="Password">
+    <button class="btn-main" onclick="handleAuth()">Login / Sign Up</button>
 </div>
 
-<!-- Main App -->
-<div id="main-app" style="display:none;">
-    <div class="header">
-        <h1>Pata Live</h1>
-        <div style="display:flex; gap:15px; font-size:20px;">🔍 🏆</div>
+<!-- Profile Setup -->
+<div id="profile-setup" style="display:none;">
+    <h2 style="margin-bottom:20px;">Complete Profile</h2>
+    <input type="text" id="username" class="glass-input" placeholder="Display Name">
+    <button class="btn-main" onclick="saveProfile()">Start Now</button>
+</div>
+
+<!-- Main App Shell -->
+<div class="app-shell" id="main-ui" style="display:none;">
+    <div class="top-bar">
+        <div class="header-tabs-container">
+            <div class="header-tabs">
+                <div class="h-tab">Follow</div>
+                <div class="h-tab active">Popular</div>
+                <div class="h-tab">New</div>
+                <div class="h-tab">Explore</div>
+            </div>
+        </div>
+        <div style="display:flex; gap:15px; font-size:20px; padding-left:10px;">
+            <span onclick="alert('Ranking Board Coming Soon!')">🏆</span>
+            <span onclick="alert('Search Coming Soon!')">🔍</span>
+        </div>
     </div>
 
-    <div class="banner-slider">
-        <div class="banner">
-            <div style="padding:20px;">
-                <h2 style="font-weight:800;">WEEKLY<br>RANKING</h2>
-                <button style="margin-top:10px; padding:5px 15px; border-radius:10px; border:none; background:white; color:black; font-weight:700; font-size:12px;">Check Now</button>
+    <div class="banner-section">
+        <div class="banner-container">
+            <div class="banner-track" id="bTrack">
+                <img src="https://picsum.photos/seed/pata1/800/400">
+                <img src="https://picsum.photos/seed/pata2/800/400">
+                <img src="https://picsum.photos/seed/pata3/800/400">
             </div>
         </div>
     </div>
 
-    <div id="rooms-list" class="room-grid">
-        <!-- Rooms Load Here -->
+    <div class="screen-container">
+        <div class="feed-grid" id="gridPopular"></div>
     </div>
 
-    <div class="bottom-nav">
-        <div class="nav-item active"><i>🏠</i><span>Home</span></div>
-        <div class="nav-item"><i>🌍</i><span>Explore</span></div>
-        <div class="mic-btn" onclick="createNewRoom()">🎙️</div>
-        <div class="nav-item"><i>💬</i><span>Chat</span></div>
-        <div class="nav-item"><i>👤</i><span>Me</span></div>
-    </div>
+    <nav class="bottom-nav-pro">
+        <div class="nav-item active">
+            <span>🏠</span>
+            Home
+        </div>
+        <div class="nav-item">
+            <span>🕒</span>
+            History
+        </div>
+        
+        <div class="nav-mic-btn" onclick="startLive()">🎙️</div>
+        
+        <div class="nav-item">
+            <span>💬</span>
+            Message
+        </div>
+        <div class="nav-item" onclick="showProfileEditor()">
+            <span>👤</span>
+            Me
+        </div>
+    </nav>
 </div>
 
-<!-- Audio Room -->
-<div id="room-view">
-    <div class="room-top">
-        <div class="host-info">
+<!-- Audio Room UI -->
+<div id="audio-room">
+    <div class="room-header">
+        <div class="host-pill">
             <img id="room-host-img" src="">
             <div>
-                <div id="room-title" style="font-size:12px; font-weight:700;">Party Room</div>
-                <div id="room-id-display" style="font-size:10px; color:var(--gold);">ID: 000000</div>
+                <div id="room-name-display" style="font-size:12px; font-weight:700;">Party Room</div>
+                <div id="room-id-display" style="font-size:9px; color:var(--gold);">ID: 00000</div>
             </div>
         </div>
-        <div onclick="exitRoom()" style="font-size:24px; padding:10px;">✕</div>
+        <div style="display:flex; align-items:center; gap:12px;">
+            <div style="background:rgba(255,255,255,0.15); padding:4px 12px; border-radius:20px; font-size:11px;">👥 1.2k</div>
+            <div onclick="exitRoom()" style="font-size:24px; padding:5px;">✕</div>
+        </div>
     </div>
 
     <div class="seats-grid">
         <script>
             for(let i=1; i<=9; i++) {
                 document.write(`
-                    <div class="seat" onclick="toggleSeat(${i})">
+                    <div class="seat-box" onclick="handleSeat(${i})">
                         <div class="seat-circle" id="seat-${i}">
-                            <img src="https://i.ibb.co/h97p68X/crown.png" class="crown" style="display:none">
-                            <span style="font-size:24px; opacity:0.1;">🛋️</span>
+                            <img src="https://i.ibb.co/h97p68X/crown.png" class="crown-icon">
+                            <span style="font-size:26px; opacity:0.15;">🛋️</span>
+                            <div class="seat-num">${i}</div>
                         </div>
-                        <div style="font-size:10px; color:#666;" id="seat-name-${i}">Seat ${i}</div>
+                        <div id="seat-name-${i}" style="font-size:10px; color:var(--text-gray);">Wait</div>
                     </div>
                 `);
             }
         </script>
     </div>
 
-    <div class="chat-area" id="chat-box">
-        <div class="msg"><b>System:</b> Welcome! No spamming allowed.</div>
+    <div class="chat-container" id="room-chat">
+        <div class="chat-bubble"><b>System:</b> Welcome! Respect others and enjoy.</div>
     </div>
 
-    <div class="room-actions">
-        <div class="act-btn">🎙️</div>
-        <div class="act-btn">💬</div>
-        <div class="act-btn" style="background:var(--primary); width:60px; height:60px; font-size:30px;">🎁</div>
-        <div class="act-btn">🎵</div>
-        <div class="act-btn">⚙️</div>
+    <div class="room-footer">
+        <div class="room-btn" onclick="toggleMic()">🎙️</div>
+        <div class="room-btn" onclick="sendMsg()">💬</div>
+        <div class="gift-btn" onclick="alert('Gifting panel coming soon!')">🎁</div>
+        <div class="room-btn">🎵</div>
+        <div class="room-btn">⚙️</div>
     </div>
 </div>
 
 <script>
-    // Firebase Config (Confirmed from your screenshots)
+    // Firebase Initial
     const firebaseConfig = {
         apiKey: "AIzaSyD5vRGyz3qdyqhnt2T9qmlPlTeQKV5Hlbw",
         authDomain: "pata-live.firebaseapp.com",
@@ -211,134 +251,183 @@
         messagingSenderId: "644016212127",
         appId: "1:644016212127:web:214bc06f4677c8188e7aaa"
     };
-
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
-    const db = firebase.database();
+    const database = firebase.database();
 
+    let currentUserData = null;
     let currentRoomId = null;
 
-    // Error Shower
-    function showError(text) {
-        const p = document.getElementById('error-popup');
-        p.innerText = text;
-        p.style.display = 'block';
-        setTimeout(() => p.style.display = 'none', 4000);
-    }
-
-    // Login logic with error catch
-    async function handleLogin() {
+    // --- AUTH LOGIC ---
+    async function handleAuth() {
         const email = document.getElementById('email').value;
         const pass = document.getElementById('pass').value;
-        if(!email || !pass) return showError("Please enter Email & Password");
-
+        if(!email || !pass) return alert("Enter details!");
+        
         try {
             await auth.signInWithEmailAndPassword(email, pass);
         } catch (e) {
             if(e.code === 'auth/user-not-found') {
                 try {
                     await auth.createUserWithEmailAndPassword(email, pass);
-                } catch (err) { showError(err.message); }
-            } else { showError(e.message); }
+                } catch (err) { alert(err.message); }
+            } else { alert(e.message); }
         }
     }
 
     auth.onAuthStateChanged(user => {
         if(user) {
-            document.getElementById('auth-screen').style.display = 'none';
-            document.getElementById('main-app').style.display = 'block';
-            listenRooms();
+            database.ref('users/' + user.uid).once('value', snap => {
+                if(snap.exists()) {
+                    currentUserData = snap.val();
+                    document.getElementById('auth-screen').style.display = 'none';
+                    document.getElementById('profile-setup').style.display = 'none';
+                    document.getElementById('main-ui').style.display = 'flex';
+                    loadRooms();
+                } else {
+                    document.getElementById('auth-screen').style.display = 'none';
+                    document.getElementById('profile-setup').style.display = 'flex';
+                }
+            });
         } else {
             document.getElementById('auth-screen').style.display = 'flex';
-            document.getElementById('main-app').style.display = 'none';
+            document.getElementById('main-ui').style.display = 'none';
         }
     });
 
-    function listenRooms() {
-        db.ref('rooms').on('value', snap => {
-            const list = document.getElementById('rooms-list');
-            list.innerHTML = '';
+    async function saveProfile() {
+        const name = document.getElementById('username').value;
+        if(!name) return alert("Enter name!");
+        const user = auth.currentUser;
+        const profile = {
+            name: name,
+            avatar: "https://i.pravatar.cc/150?u=" + user.uid,
+            uid: user.uid,
+            id: Math.floor(100000 + Math.random() * 900000)
+        };
+        await database.ref('users/' + user.uid).set(profile);
+        currentUserData = profile;
+        document.getElementById('profile-setup').style.display = 'none';
+        document.getElementById('main-ui').style.display = 'flex';
+    }
+
+    function showProfileEditor() {
+        const newName = prompt("নতুন নাম লিখুন:", currentUserData.name);
+        if(newName) {
+            database.ref('users/' + auth.currentUser.uid).update({name: newName});
+            currentUserData.name = newName;
+            alert("প্রোফাইল আপডেট হয়েছে!");
+        }
+    }
+
+    // --- ROOMS LOGIC ---
+    function loadRooms() {
+        database.ref('live_rooms').on('value', (snap) => {
+            const grid = document.getElementById('gridPopular');
+            grid.innerHTML = '';
             snap.forEach(child => {
-                const data = child.val();
-                list.innerHTML += `
-                    <div class="room-card" onclick="enterRoom('${child.key}')">
-                        <img src="${data.hostImg || 'https://via.placeholder.com/150'}">
-                        <div class="room-meta">
-                            <div style="font-weight:600; font-size:14px;">${data.title}</div>
-                            <div style="font-size:10px; color:#ccc;">Host: ${data.hostName}</div>
+                const room = child.val();
+                grid.innerHTML += `
+                    <div class="live-card" onclick="enterRoom('${child.key}')">
+                        <img src="${room.hostAvatar || 'https://picsum.photos/seed/'+child.key+'/400/500'}">
+                        <div class="live-tag">LIVE</div>
+                        <div class="card-footer">
+                            <div style="font-weight:700;">${room.name}</div>
+                            <div style="font-size:10px; color:#bbb;">Host: ${room.host}</div>
                         </div>
                     </div>`;
             });
         });
     }
 
-    function createNewRoom() {
-        const user = auth.currentUser;
-        const rid = Math.floor(100000 + Math.random() * 899999);
-        db.ref('rooms/' + rid).set({
-            title: user.email.split('@')[0] + "'s Party",
-            hostName: user.email.split('@')[0],
-            hostImg: "https://i.pravatar.cc/150?u=" + user.uid,
-            hostUid: user.uid,
-            createdAt: Date.now()
-        });
+    async function startLive() {
+        const title = prompt("রুমের টাইটেল দিন:");
+        if(!title) return;
+        const rid = Math.floor(100000 + Math.random() * 900000);
+        const roomData = {
+            name: title,
+            host: currentUserData.name,
+            hostAvatar: currentUserData.avatar,
+            hostUid: currentUserData.uid,
+            roomId: rid,
+            seats: { 1: { uid: currentUserData.uid, name: currentUserData.name, avatar: currentUserData.avatar } }
+        };
+        await database.ref('live_rooms/' + rid).set(roomData);
         enterRoom(rid);
     }
 
     function enterRoom(id) {
         currentRoomId = id;
-        document.getElementById('room-view').style.display = 'flex';
-        
-        db.ref('rooms/' + id).on('value', snap => {
+        document.getElementById('audio-room').style.display = 'flex';
+        database.ref('live_rooms/' + id).on('value', snap => {
             const data = snap.val();
             if(!data) return;
-            document.getElementById('room-host-img').src = data.hostImg;
-            document.getElementById('room-title').innerText = data.title;
+            document.getElementById('room-name-display').innerText = data.name;
             document.getElementById('room-id-display').innerText = "ID: " + id;
+            document.getElementById('room-host-img').src = data.hostAvatar;
 
-            // Sync Seats
             for(let i=1; i<=9; i++) {
-                const seatData = data.seats ? data.seats[i] : null;
+                const s = data.seats ? data.seats[i] : null;
                 const circle = document.getElementById('seat-'+i);
-                const nameLabel = document.getElementById('seat-name-'+i);
-                
-                if(seatData) {
-                    circle.innerHTML = `<img src="${seatData.img}" class="user-img"><img src="https://i.ibb.co/h97p68X/crown.png" class="crown" style="display:block">`;
+                const nameLbl = document.getElementById('seat-name-'+i);
+                if(s) {
+                    circle.innerHTML = `<img src="https://i.ibb.co/h97p68X/crown.png" class="crown-icon" style="display:block"><img src="${s.avatar}" class="user-avatar"><div class="seat-num">${i}</div>`;
                     circle.classList.add('active');
-                    nameLabel.innerText = seatData.name;
+                    nameLbl.innerText = s.name.split(' ')[0];
                 } else {
-                    circle.innerHTML = `<span style="font-size:24px; opacity:0.1;">🛋️</span>`;
+                    circle.innerHTML = `<span style="font-size:26px; opacity:0.15;">🛋️</span><div class="seat-num">${i}</div>`;
                     circle.classList.remove('active');
-                    nameLabel.innerText = "Seat " + i;
+                    nameLbl.innerText = "Wait";
                 }
             }
         });
     }
 
-    function toggleSeat(num) {
-        const user = auth.currentUser;
-        const seatRef = db.ref('rooms/' + currentRoomId + '/seats/' + num);
-        
-        seatRef.once('value', snap => {
-            if(snap.exists()) {
-                if(snap.val().uid === user.uid) seatRef.remove();
-            } else {
-                seatRef.set({
-                    uid: user.uid,
-                    name: user.email.split('@')[0],
-                    img: "https://i.pravatar.cc/150?u=" + user.uid
-                });
-            }
-        });
+    async function handleSeat(num) {
+        const ref = database.ref('live_rooms/' + currentRoomId + '/seats/' + num);
+        const snap = await ref.get();
+        if(snap.exists()) {
+            if(snap.val().uid === currentUserData.uid) ref.remove();
+        } else {
+            // Remove from any other seat first
+            const allSeats = await database.ref('live_rooms/' + currentRoomId + '/seats').get();
+            allSeats.forEach(child => { if(child.val().uid === currentUserData.uid) child.ref.remove(); });
+            // Sit here
+            ref.set({ uid: currentUserData.uid, name: currentUserData.name, avatar: currentUserData.avatar });
+        }
+    }
+
+    function toggleMic() {
+        const btn = event.currentTarget;
+        btn.style.color = btn.style.color === 'red' ? 'white' : 'red';
+        btn.innerText = btn.innerText === '🎙️' ? '🔇' : '🎙️';
+    }
+
+    function sendMsg() {
+        const m = prompt("কি বলতে চান?");
+        if(m) {
+            const chat = document.getElementById('room-chat');
+            chat.innerHTML += `<div class="chat-bubble"><b>${currentUserData.name}:</b> ${m}</div>`;
+            chat.scrollTop = chat.scrollHeight;
+        }
     }
 
     function exitRoom() {
-        if(currentRoomId) db.ref('rooms/' + currentRoomId).off();
-        document.getElementById('room-view').style.display = 'none';
+        if(currentRoomId) {
+            database.ref('live_rooms/' + currentRoomId + '/seats').once('value', snap => {
+                snap.forEach(c => { if(c.val().uid === auth.currentUser.uid) c.ref.remove(); });
+            });
+            database.ref('live_rooms/' + currentRoomId).off();
+        }
+        document.getElementById('audio-room').style.display = 'none';
         currentRoomId = null;
     }
-</script>
 
-</body>
-</html>
-
+    // Banner Logic
+    let step = 0;
+    setInterval(() => {
+        step = (step + 1) % 3;
+        const track = document.getElementById('bTrack');
+        if(track) track.style.transform = `translateX(-${step * 33.33}%)`;
+    }, 3000);
+</scrip

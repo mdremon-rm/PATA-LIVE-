@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Pata Live - Original Master Pro</title>
     
-    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
@@ -26,11 +25,10 @@
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
         body { font-family: 'Inter', sans-serif; background: var(--bg); color: white; overflow-x: hidden; }
 
-        /* Auth Screen - Added inside existing structure */
-        #auth-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px; }
-        .auth-card { width: 100%; max-width: 350px; text-align: center; }
-        .auth-input { width: 100%; height: 55px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; padding: 0 15px; color: white; margin-bottom: 15px; outline: none; }
-        .auth-btn { width: 100%; height: 55px; border-radius: 15px; border: none; background: linear-gradient(45deg, var(--primary), var(--secondary)); color: white; font-weight: 700; cursor: pointer; }
+        /* Auth Overlay */
+        #auth-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px; text-align: center; }
+        .auth-input { width: 100%; max-width: 320px; height: 50px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 25px; padding: 0 20px; color: white; margin-bottom: 15px; outline: none; }
+        .auth-btn { width: 100%; max-width: 320px; height: 50px; border-radius: 25px; border: none; background: linear-gradient(45deg, var(--primary), var(--secondary)); color: white; font-weight: 700; cursor: pointer; }
 
         .app-shell { display: flex; flex-direction: column; min-height: 100vh; }
 
@@ -74,39 +72,49 @@
             cursor: pointer; z-index: 2001;
         }
 
-        /* Professional Audio Room UI */
-        #room-view { position: fixed; inset: 0; background: linear-gradient(180deg, #1e0836 0%, var(--bg) 100%); z-index: 9000; display: none; flex-direction: column; }
-        .room-top { padding: 20px; display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
-        .host-info { background: rgba(255,255,255,0.08); padding: 5px 15px 5px 5px; border-radius: 30px; display: flex; align-items: center; gap: 10px; border: 1px solid rgba(255,255,255,0.1); }
-        .host-info img { width: 38px; height: 38px; border-radius: 50%; border: 2px solid var(--gold); }
-        .seats-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; padding: 25px; margin-top: 20px; }
-        .seat-item { display: flex; flex-direction: column; align-items: center; gap: 8px; position: relative; }
-        .seat-circle { width: 80px; height: 80px; border-radius: 22px; background: rgba(255,255,255,0.03); border: 1.5px dashed rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; overflow: visible; }
-        .seat-circle.active { border: 2px solid var(--gold); border-style: solid; background: rgba(255,255,255,0.08); }
-        .seat-circle img { width: 100%; height: 100%; border-radius: 20px; object-fit: cover; }
-        .seat-tag { position: absolute; bottom: -5px; background: var(--primary); font-size: 9px; padding: 2px 8px; border-radius: 10px; font-weight: 700; z-index: 2; }
-        .chat-display { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; background: linear-gradient(transparent, rgba(0,0,0,0.3)); }
-        .chat-msg { font-size: 13px; background: rgba(0,0,0,0.2); padding: 8px 15px; border-radius: 15px; width: fit-content; max-width: 85%; }
-        .chat-msg b { color: var(--gold); margin-right: 5px; }
-        .room-bottom { height: 80px; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: space-around; padding: 0 15px; }
-        .action-icon { width: 45px; height: 45px; border-radius: 50%; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 22px; }
-        .gift-icon { width: 60px; height: 60px; background: linear-gradient(45deg, var(--primary), var(--secondary)); border-radius: 50%; font-size: 32px; box-shadow: 0 0 20px rgba(255,45,85,0.4); }
+        /* --- Professional Audio Room Look --- */
+        #room-overlay { position: fixed; inset: 0; background: linear-gradient(to bottom, #1e0836, #0b0118); z-index: 9000; display: none; flex-direction: column; }
+        .room-header { height: 70px; display: flex; align-items: center; justify-content: space-between; padding: 0 15px; margin-top: 10px; }
+        .room-host-pill { display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.3); padding: 5px 15px 5px 5px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.1); }
+        .room-host-pill img { width: 35px; height: 35px; border-radius: 50%; border: 2px solid var(--gold); }
+        
+        .seats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; padding: 30px 20px; margin: 0 auto; width: 100%; max-width: 400px; }
+        .seat-unit { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+        .seat-circle { 
+            width: 75px; height: 75px; border-radius: 50%; 
+            background: rgba(255,255,255,0.05); border: 1.5px dashed rgba(255,255,255,0.2); 
+            display: flex; align-items: center; justify-content: center; position: relative;
+            transition: 0.3s;
+        }
+        .seat-circle.active { border: 2.5px solid var(--gold); border-style: solid; box-shadow: 0 0 15px rgba(255, 215, 0, 0.3); }
+        .seat-circle img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+        .seat-index { position: absolute; bottom: -5px; background: #000; font-size: 10px; padding: 1px 7px; border-radius: 10px; border: 0.5px solid var(--gold); color: var(--gold); font-weight: bold; }
+        .seat-name { font-size: 11px; color: var(--text-gray); font-weight: 500; text-align: center; width: 80px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+
+        .room-chat { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
+        .chat-row { font-size: 13px; background: rgba(0,0,0,0.2); padding: 6px 12px; border-radius: 12px; width: fit-content; max-width: 85%; }
+        .chat-row b { color: var(--gold); margin-right: 5px; }
+
+        .room-footer { height: 80px; display: flex; align-items: center; justify-content: space-around; padding: 0 15px; background: rgba(0,0,0,0.3); }
+        .room-action { width: 45px; height: 45px; border-radius: 50%; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 22px; }
+        .room-gift { width: 60px; height: 60px; background: linear-gradient(45deg, var(--primary), var(--secondary)); border-radius: 50%; font-size: 32px; box-shadow: 0 0 20px rgba(255,45,85,0.4); }
     </style>
 </head>
 <body>
 
-<!-- User Auth -->
+<!-- Login -->
 <div id="auth-overlay">
-    <div class="auth-card">
-        <h1 style="font-size: 36px; font-weight: 900; margin-bottom: 10px;">Pata Live</h1>
-        <p style="color: var(--text-gray); margin-bottom: 40px;">Voice Party & Earning</p>
-        <input type="email" id="logEmail" class="auth-input" placeholder="Email Address">
-        <input type="password" id="logPass" class="auth-input" placeholder="Password">
-        <button class="auth-btn" onclick="handleAuth()">Sign In / Create Account</button>
+    <div style="margin-bottom:40px;">
+        <h1 style="font-size:38px; font-weight:900;">Pata Live</h1>
+        <p style="color:var(--text-gray);">Professional Audio Party</p>
     </div>
+    <input type="email" id="email" class="auth-input" placeholder="Email Address">
+    <input type="password" id="pass" class="auth-input" placeholder="Password">
+    <button class="auth-btn" onclick="handleAuth()">Login / Sign Up</button>
 </div>
 
-<div class="app-shell" id="app-main" style="display:none;">
+<!-- Main App -->
+<div class="app-shell" id="main-app" style="display:none;">
     <div class="top-bar">
         <div class="header-tabs-container">
             <div class="header-tabs">
@@ -117,17 +125,17 @@
             </div>
         </div>
         <div style="display:flex; gap:15px; font-size:20px; padding-left:10px;">
-            <span onclick="alert('Ranking Coming Soon!')">🏆</span>
-            <span onclick="updateProfile()">👤</span>
+            <span>🏆</span>
+            <span onclick="editProfile()">👤</span>
         </div>
     </div>
 
     <div class="banner-section">
         <div class="banner-container">
             <div class="banner-track" id="bTrack">
-                <img src="https://picsum.photos/seed/p1/800/400">
-                <img src="https://picsum.photos/seed/p2/800/400">
-                <img src="https://picsum.photos/seed/p3/800/400">
+                <img src="https://picsum.photos/seed/pata1/800/400">
+                <img src="https://picsum.photos/seed/pata2/800/400">
+                <img src="https://picsum.photos/seed/pata3/800/400">
             </div>
         </div>
     </div>
@@ -137,75 +145,60 @@
     </div>
 
     <nav class="bottom-nav-pro">
-        <div class="nav-item active">
-            <span>🏠</span>
-            Home
-        </div>
-        <div class="nav-item">
-            <span>🕒</span>
-            History
-        </div>
-        
-        <div class="nav-mic-btn" onclick="startLive()">🎙️</div>
-        
-        <div class="nav-item">
-            <span>💬</span>
-            Message
-        </div>
-        <div class="nav-item" onclick="updateProfile()">
-            <span>👤</span>
-            Me
-        </div>
+        <div class="nav-item active"><span>🏠</span>Home</div>
+        <div class="nav-item"><span>🕒</span>History</div>
+        <div class="nav-mic-btn" onclick="createRoom()">🎙️</div>
+        <div class="nav-item"><span>💬</span>Message</div>
+        <div class="nav-item" onclick="editProfile()"><span>👤</span>Me</div>
     </nav>
 </div>
 
-<!-- Audio Room View -->
-<div id="room-view">
-    <div class="room-top">
-        <div class="host-info">
-            <img id="room-host-img" src="">
+<!-- Professional Audio Room Overlay -->
+<div id="room-overlay">
+    <div class="room-header">
+        <div class="room-host-pill">
+            <img id="host-avatar" src="">
             <div>
-                <div id="room-name-top" style="font-size: 13px; font-weight: 800;">Loading...</div>
-                <div id="room-id-top" style="font-size: 10px; color: var(--gold);">ID: 000000</div>
+                <div id="room-title-ui" style="font-size:12px; font-weight:800;">Party Room</div>
+                <div id="room-id-ui" style="font-size:9px; color:var(--gold);">ID: 000000</div>
             </div>
         </div>
         <div style="display:flex; gap:15px; align-items:center;">
-            <div style="background:rgba(255,255,255,0.1); padding:4px 12px; border-radius:20px; font-size:11px;">🔥 1.2k</div>
-            <div onclick="exitRoom()" style="font-size: 26px; font-weight: 300;">✕</div>
+            <div style="background:rgba(255,255,255,0.1); padding:4px 12px; border-radius:20px; font-size:11px;">👥 1.5k</div>
+            <div onclick="exitRoom()" style="font-size:26px; padding:5px;">✕</div>
         </div>
     </div>
 
-    <div class="seats-container">
+    <div class="seats-grid">
         <script>
             for(let i=1; i<=9; i++) {
                 document.write(`
-                    <div class="seat-item" onclick="handleSeat(${i})">
+                    <div class="seat-unit" onclick="toggleSeat(${i})">
                         <div class="seat-circle" id="seat-${i}">
-                            <span style="font-size: 28px; opacity: 0.1;">🛋️</span>
-                            <div class="seat-tag" id="seat-tag-${i}">Seat ${i}</div>
+                            <span style="font-size:28px; opacity:0.1;">👤</span>
+                            <div class="seat-index">${i}</div>
                         </div>
-                        <div id="seat-user-${i}" style="font-size: 10px; color: var(--text-gray); font-weight: 600;">Empty</div>
+                        <div class="seat-name" id="name-${i}">Empty</div>
                     </div>
                 `);
             }
         </script>
     </div>
 
-    <div class="chat-display" id="room-chat">
-        <div class="chat-msg"><b>System:</b> Welcome! Respect everyone in the room.</div>
+    <div class="room-chat" id="chat-box">
+        <div class="chat-row"><b>System:</b> Welcome! Be respectful and have fun!</div>
     </div>
 
-    <div class="room-bottom">
-        <div class="action-icon" onclick="toggleMic()">🎙️</div>
-        <div class="action-icon" onclick="sendMsg()">💬</div>
-        <div class="gift-icon" onclick="sendGift()">🎁</div>
-        <div class="action-icon">🎵</div>
-        <div class="action-icon">⚙️</div>
+    <div class="room-footer">
+        <div class="room-action" onclick="toggleMic()">🎙️</div>
+        <div class="room-action" onclick="sendChat()">💬</div>
+        <div class="room-gift" onclick="alert('Gifting Panel Coming Soon!')">🎁</div>
+        <div class="room-action">🎵</div>
+        <div class="room-action">⚙️</div>
     </div>
 </div>
 
 <script>
-    // Firebase Setup
     const firebaseConfig = {
         apiKey: "AIzaSyD5vRGyz3qdyqhnt2T9qmlPlTeQKV5Hlbw",
         authDomain: "pata-live.firebaseapp.com",
@@ -219,15 +212,14 @@
     const auth = firebase.auth();
     const database = firebase.database();
 
-    let currentUser = null;
-    let currentRoomId = null;
+    let userData = null;
+    let activeRoomId = null;
 
-    // --- Authentication Logic ---
+    // --- Auth Logic ---
     async function handleAuth() {
-        const email = document.getElementById('logEmail').value;
-        const pass = document.getElementById('logPass').value;
-        if(!email || !pass) return alert("Please fill details!");
-        
+        const email = document.getElementById('email').value;
+        const pass = document.getElementById('pass').value;
+        if(!email || !pass) return alert("Fill all fields");
         try {
             await auth.signInWithEmailAndPassword(email, pass);
         } catch (e) {
@@ -239,25 +231,31 @@
 
     auth.onAuthStateChanged(user => {
         if(user) {
-            currentUser = user;
-            document.getElementById('auth-overlay').style.display = 'none';
-            document.getElementById('app-main').style.display = 'flex';
-            initApp();
+            database.ref('users/' + user.uid).on('value', snap => {
+                if(!snap.exists()){
+                    const initData = { name: "User_" + user.uid.slice(0,4), avatar: "https://i.pravatar.cc/150?u="+user.uid, uid: user.uid };
+                    database.ref('users/' + user.uid).set(initData);
+                }
+                userData = snap.val();
+                document.getElementById('auth-overlay').style.display = 'none';
+                document.getElementById('main-app').style.display = 'flex';
+                loadRooms();
+            });
         } else {
             document.getElementById('auth-overlay').style.display = 'flex';
-            document.getElementById('app-main').style.display = 'none';
+            document.getElementById('main-app').style.display = 'none';
         }
     });
 
-    function initApp() {
-        database.ref('live_rooms').on('value', (snap) => {
+    function loadRooms() {
+        database.ref('live_rooms').on('value', snap => {
             const grid = document.getElementById('gridPopular');
             grid.innerHTML = '';
             snap.forEach(child => {
                 const room = child.val();
                 grid.innerHTML += `
                     <div class="live-card" onclick="joinRoom('${child.key}')">
-                        <img src="${room.hostImg || 'https://picsum.photos/seed/'+child.key+'/400/500'}">
+                        <img src="${room.hostAvatar || 'https://picsum.photos/seed/'+child.key+'/400/500'}">
                         <div class="live-tag">LIVE</div>
                         <div class="card-footer">
                             <div style="font-weight:700;">${room.name}</div>
@@ -268,115 +266,94 @@
         });
     }
 
-    // --- Profile Management ---
-    function updateProfile() {
-        const name = prompt("Enter your Name:");
-        if(name) {
-            database.ref('users/' + currentUser.uid).update({name: name});
-            alert("Profile Updated!");
-        }
+    // --- Profile ---
+    function editProfile() {
+        const n = prompt("আপনার নাম দিন:", userData.name);
+        if(n) database.ref('users/' + auth.currentUser.uid).update({name: n});
     }
 
     // --- Room Logic ---
-    async function startLive() {
-        const title = prompt("Enter Room Title:");
+    async function createRoom() {
+        const title = prompt("রুমের টাইটেল দিন:");
         if(!title) return;
         const rid = Math.floor(100000 + Math.random() * 900000);
-        const userRef = await database.ref('users/' + currentUser.uid).once('value');
-        const uName = userRef.exists() ? userRef.val().name : "Host_" + rid;
-        
-        const roomData = {
+        await database.ref('live_rooms/' + rid).set({
             name: title,
-            host: uName,
-            hostUid: currentUser.uid,
-            hostImg: "https://i.pravatar.cc/150?u=" + currentUser.uid,
-            seats: { 1: { uid: currentUser.uid, name: uName, avatar: "https://i.pravatar.cc/150?u=" + currentUser.uid } }
-        };
-        await database.ref('live_rooms/' + rid).set(roomData);
+            host: userData.name,
+            hostAvatar: userData.avatar,
+            hostUid: userData.uid,
+            seats: { 1: { uid: userData.uid, name: userData.name, avatar: userData.avatar } }
+        });
         joinRoom(rid);
     }
 
     function joinRoom(id) {
-        currentRoomId = id;
-        document.getElementById('room-view').style.display = 'flex';
+        activeRoomId = id;
+        document.getElementById('room-overlay').style.display = 'flex';
         database.ref('live_rooms/' + id).on('value', snap => {
             const data = snap.val();
             if(!data) return;
-            document.getElementById('room-name-top').innerText = data.name;
-            document.getElementById('room-id-top').innerText = "ID: " + id;
-            document.getElementById('room-host-img').src = data.hostImg;
+            document.getElementById('room-title-ui').innerText = data.name;
+            document.getElementById('room-id-ui').innerText = "ID: " + id;
+            document.getElementById('host-avatar').src = data.hostAvatar;
 
-            // Sync Seats
             for(let i=1; i<=9; i++) {
                 const seat = data.seats ? data.seats[i] : null;
                 const circle = document.getElementById('seat-'+i);
-                const userLabel = document.getElementById('seat-user-'+i);
+                const nameTxt = document.getElementById('name-'+i);
                 if(seat) {
-                    circle.innerHTML = `<img src="${seat.avatar}">`;
+                    circle.innerHTML = `<img src="${seat.avatar}"><div class="seat-index">${i}</div>`;
                     circle.classList.add('active');
-                    userLabel.innerText = seat.name;
+                    nameTxt.innerText = seat.name;
                 } else {
-                    circle.innerHTML = `<span style="font-size: 28px; opacity: 0.1;">🛋️</span><div class="seat-tag">Seat ${i}</div>`;
+                    circle.innerHTML = `<span style="font-size:28px; opacity:0.1;">👤</span><div class="seat-index">${i}</div>`;
                     circle.classList.remove('active');
-                    userLabel.innerText = "Empty";
+                    nameTxt.innerText = "Empty";
                 }
             }
         });
     }
 
-    async function handleSeat(num) {
-        const seatRef = database.ref('live_rooms/' + currentRoomId + '/seats/' + num);
-        const snap = await seatRef.get();
+    async function toggleSeat(num) {
+        const ref = database.ref('live_rooms/' + activeRoomId + '/seats/' + num);
+        const snap = await ref.get();
         if(snap.exists()) {
-            if(snap.val().uid === currentUser.uid) seatRef.remove();
+            if(snap.val().uid === userData.uid) ref.remove();
         } else {
-            // Remove from other seats first
-            const roomSeats = await database.ref('live_rooms/' + currentRoomId + '/seats').get();
-            roomSeats.forEach(child => { if(child.val().uid === currentUser.uid) child.ref.remove(); });
-            
-            const userSnap = await database.ref('users/' + currentUser.uid).once('value');
-            const name = userSnap.exists() ? userSnap.val().name : currentUser.email.split('@')[0];
-            
-            seatRef.set({
-                uid: currentUser.uid,
-                name: name,
-                avatar: "https://i.pravatar.cc/150?u=" + currentUser.uid
-            });
+            // Remove from other seats
+            const all = await database.ref('live_rooms/' + activeRoomId + '/seats').get();
+            all.forEach(c => { if(c.val().uid === userData.uid) c.ref.remove(); });
+            // Sit
+            ref.set({ uid: userData.uid, name: userData.name, avatar: userData.avatar });
         }
     }
 
-    function sendMsg() {
-        const msg = prompt("Message:");
-        if(msg) {
-            const chatBox = document.getElementById('room-chat');
-            chatBox.innerHTML += `<div class="chat-msg"><b>You:</b> ${msg}</div>`;
-            chatBox.scrollTop = chatBox.scrollHeight;
+    function sendChat() {
+        const m = prompt("কি বলতে চান?");
+        if(m) {
+            const box = document.getElementById('chat-box');
+            box.innerHTML += `<div class="chat-row"><b>${userData.name}:</b> ${m}</div>`;
+            box.scrollTop = box.scrollHeight;
         }
-    }
-
-    function sendGift() {
-        alert("Gift Sent! 🎁");
-        const chatBox = document.getElementById('room-chat');
-        chatBox.innerHTML += `<div class="chat-msg" style="color:var(--primary)"><b>System:</b> You sent a gift 🎁</div>`;
     }
 
     function toggleMic() {
-        const icon = event.currentTarget;
-        icon.style.color = icon.style.color === 'red' ? 'white' : 'red';
+        const btn = event.currentTarget;
+        btn.style.color = btn.style.color === 'red' ? 'white' : 'red';
     }
 
     function exitRoom() {
-        if(currentRoomId) {
-            database.ref('live_rooms/' + currentRoomId + '/seats').once('value', snap => {
-                snap.forEach(c => { if(c.val().uid === currentUser.uid) c.ref.remove(); });
+        if(activeRoomId) {
+            database.ref('live_rooms/' + activeRoomId + '/seats').once('value', snap => {
+                snap.forEach(c => { if(c.val().uid === auth.currentUser.uid) c.ref.remove(); });
             });
-            database.ref('live_rooms/' + currentRoomId).off();
+            database.ref('live_rooms/' + activeRoomId).off();
         }
-        document.getElementById('room-view').style.display = 'none';
-        currentRoomId = null;
+        document.getElementById('room-overlay').style.display = 'none';
+        activeRoomId = null;
     }
 
-    // Original Banner Logic
+    // Original Banner Animation
     let step = 0;
     setInterval(() => {
         step = (step + 1) % 3;
@@ -388,3 +365,4 @@
 </body>
 </html>
 
+    

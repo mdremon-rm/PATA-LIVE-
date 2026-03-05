@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Pata Live - Final Master Voice</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pata Live - Original Master Voice</title>
     
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -27,56 +27,182 @@
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: white; overflow-x: hidden; }
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: var(--bg); 
+            color: white; 
+            overflow-x: hidden;
+            width: 100vw;
+            height: 100vh;
+        }
 
         /* Header Style */
-        .top-bar { height: 65px; display: flex; align-items: center; justify-content: space-between; padding: 0 15px; background: var(--bg); position: sticky; top: 0; z-index: 1000; }
-        .tabs-wrapper { flex: 1; overflow-x: auto; white-space: nowrap; scrollbar-width: none; }
+        .top-bar { 
+            height: 60px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            padding: 0 15px; 
+            background: var(--bg); 
+            position: sticky; 
+            top: 0; 
+            z-index: 1000; 
+        }
+        .tabs-wrapper { 
+            flex: 1; 
+            overflow-x: auto; 
+            white-space: nowrap; 
+            scrollbar-width: none; 
+        }
+        .tabs-wrapper::-webkit-scrollbar { display: none; }
         .tabs { display: flex; gap: 20px; align-items: center; }
-        .tab-item { font-size: 14px; color: var(--text-gray); font-weight: 600; cursor: pointer; padding: 10px 0; position: relative; }
-        .tab-item.active { color: white; font-size: 16px; border-bottom: 3.5px solid var(--primary); }
+        .tab-item { 
+            font-size: 14px; 
+            color: var(--text-gray); 
+            font-weight: 600; 
+            cursor: pointer; 
+            padding: 10px 0; 
+        }
+        .tab-item.active { 
+            color: white; 
+            font-size: 16px; 
+            border-bottom: 3px solid var(--primary); 
+        }
 
-        .header-actions { display: flex; gap: 18px; font-size: 22px; margin-left: 15px; align-items: center; }
+        .header-actions { display: flex; gap: 18px; font-size: 20px; align-items: center; }
 
-        /* Feed Grid */
-        .main-content { padding: 12px; padding-bottom: 100px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .room-card { aspect-ratio: 1/1.2; border-radius: 18px; overflow: hidden; position: relative; background: var(--card-bg); border: 1px solid rgba(255,255,255,0.06); }
+        /* Feed Grid Fixed */
+        .main-content { 
+            padding: 10px; 
+            padding-bottom: 100px; 
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 10px; 
+            width: 100%;
+        }
+        .room-card { 
+            border-radius: 15px; 
+            overflow: hidden; 
+            position: relative; 
+            background: var(--card-bg); 
+            height: 200px;
+        }
         .room-card img { width: 100%; height: 100%; object-fit: cover; }
-        .card-details { position: absolute; bottom: 0; width: 100%; padding: 10px; background: linear-gradient(to top, rgba(0,0,0,0.95), transparent); }
-        .live-tag { position: absolute; top: 10px; left: 10px; background: var(--primary); font-size: 9px; font-weight: 900; padding: 3px 8px; border-radius: 10px; }
+        .card-details { 
+            position: absolute; 
+            bottom: 0; 
+            width: 100%; 
+            padding: 8px; 
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); 
+        }
+        .live-tag { 
+            position: absolute; 
+            top: 8px; 
+            left: 8px; 
+            background: var(--primary); 
+            font-size: 8px; 
+            font-weight: 900; 
+            padding: 2px 6px; 
+            border-radius: 10px; 
+        }
 
-        /* Overlays & Panels */
-        .full-screen-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 8000; display: none; flex-direction: column; animation: fadeIn 0.25s ease-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: scale(1.05); } to { opacity: 1; transform: scale(1); } }
+        /* Overlays - Original Design */
+        .full-screen-overlay { 
+            position: fixed; 
+            inset: 0; 
+            background: var(--bg); 
+            z-index: 8000; 
+            display: none; 
+            flex-direction: column; 
+        }
+        .glass-top { 
+            height: 60px; 
+            display: flex; 
+            align-items: center; 
+            padding: 0 15px; 
+            background: var(--glass); 
+            backdrop-filter: blur(20px); 
+            border-bottom: 1px solid rgba(255,255,255,0.1); 
+        }
         
-        .glass-top { height: 65px; display: flex; align-items: center; padding: 0 15px; background: var(--glass); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.1); }
-        
-        .back-arrow { cursor: pointer; margin-right: 15px; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; }
-        .back-arrow svg { width: 24px; height: 24px; fill: none; stroke: white; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+        .back-arrow { 
+            cursor: pointer; 
+            margin-right: 12px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            width: 35px; 
+            height: 35px; 
+        }
+        .back-arrow svg { width: 22px; height: 22px; fill: none; stroke: white; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
 
-        /* Ranking Design */
-        .rank-top { display: flex; align-items: flex-end; justify-content: center; gap: 15px; padding: 40px 10px; background: linear-gradient(180deg, #300c50, var(--bg)); }
-        .user-podium { display: flex; flex-direction: column; align-items: center; gap: 8px; }
-        .podium-avatar { border-radius: 50%; border: 3px solid #555; width: 75px; height: 75px; object-fit: cover; }
-        .rank-gold .podium-avatar { width: 95px; height: 95px; border-color: var(--gold); box-shadow: 0 0 20px rgba(255, 215, 0, 0.3); }
+        /* Ranking */
+        .rank-top { 
+            display: flex; 
+            align-items: flex-end; 
+            justify-content: center; 
+            gap: 15px; 
+            padding: 30px 10px; 
+            background: linear-gradient(180deg, #2a0a45, var(--bg)); 
+        }
+        .user-podium { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+        .podium-avatar { border-radius: 50%; border: 2px solid #444; width: 65px; height: 65px; object-fit: cover; }
+        .rank-gold .podium-avatar { width: 85px; height: 85px; border-color: var(--gold); }
 
-        /* Bottom Nav */
-        .nav-bar { position: fixed; bottom: 0; width: 100%; height: 75px; background: rgba(15, 2, 31, 0.98); display: flex; align-items: center; justify-content: space-evenly; border-top: 1px solid rgba(255,255,255,0.05); z-index: 2000; }
+        /* Bottom Nav Fixed */
+        .nav-bar { 
+            position: fixed; 
+            bottom: 0; 
+            width: 100%; 
+            height: 70px; 
+            background: rgba(15, 2, 31, 0.95); 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-around; 
+            border-top: 1px solid rgba(255,255,255,0.05); 
+            z-index: 2000; 
+        }
         .nav-link { display: flex; flex-direction: column; align-items: center; font-size: 10px; color: var(--text-gray); cursor: pointer; }
-        .nav-link img { width: 22px; height: 22px; border-radius: 50%; margin-bottom: 3px; border: 1px solid rgba(255,255,255,0.15); }
-        .mic-btn { width: 62px; height: 62px; background: linear-gradient(45deg, var(--secondary), var(--primary)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; position: relative; top: -18px; border: 4px solid var(--bg); box-shadow: 0 8px 25px rgba(255, 45, 85, 0.4); }
+        .nav-link img { width: 20px; height: 20px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.2); margin-bottom: 2px; }
+        .mic-btn { 
+            width: 55px; 
+            height: 55px; 
+            background: linear-gradient(45deg, var(--secondary), var(--primary)); 
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 24px; 
+            margin-top: -25px; 
+            border: 4px solid var(--bg); 
+            box-shadow: 0 5px 15px rgba(255, 45, 85, 0.3);
+        }
 
-        /* Room Interior */
+        /* Room Interior Fixed */
         #room-view { position: fixed; inset: 0; background: linear-gradient(180deg, #1e0836, #0b0118); z-index: 9000; display: none; flex-direction: column; }
-        .grid-seats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; padding: 40px 20px; }
-        .seat-unit { display: flex; flex-direction: column; align-items: center; gap: 8px; }
-        .seat-orb { width: 75px; height: 75px; border-radius: 50%; background: rgba(255,255,255,0.05); border: 2px dashed rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; overflow: hidden; transition: all 0.3s; }
-        .seat-orb.active { border: 2px solid var(--gold); border-style: solid; box-shadow: 0 0 15px rgba(255, 215, 0, 0.2); }
+        .grid-seats { 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 15px; 
+            padding: 30px 15px; 
+            justify-items: center;
+        }
+        .seat-unit { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+        .seat-orb { 
+            width: 65px; 
+            height: 65px; 
+            border-radius: 50%; 
+            background: rgba(255,255,255,0.05); 
+            border: 1.5px dashed rgba(255,255,255,0.2); 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            overflow: hidden; 
+        }
+        .seat-orb.active { border: 2px solid var(--gold); border-style: solid; }
         .seat-orb img { width: 100%; height: 100%; object-fit: cover; }
-        
-        /* Voice Anim */
         .speaking { border-color: var(--primary) !important; animation: pulse 1s infinite; }
-        @keyframes pulse { 0% { box-shadow: 0 0 0 0px rgba(255, 45, 85, 0.4); } 100% { box-shadow: 0 0 0 15px rgba(255, 45, 85, 0); } }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0px rgba(255, 45, 85, 0.4); } 100% { box-shadow: 0 0 0 10px rgba(255, 45, 85, 0); } }
     </style>
 </head>
 <body>
@@ -103,8 +229,8 @@
     <div class="nav-bar">
         <div class="nav-link"><span>🏠</span>Home</div>
         <div class="nav-link"><span>🕒</span>History</div>
-        <div class="mic-btn" onclick="joinAudioRoom('Main Party')">🎙️</div>
-        <div class="nav-link"><span>💬</span>Message</div>
+        <div class="mic-btn" onclick="joinAudioRoom('Party Hub')">🎙️</div>
+        <div class="nav-link"><span>💬</span>Chat</div>
         <div class="nav-link" onclick="handleProfileEdit()">
             <img src="https://i.pravatar.cc/100?u=guest" id="nav-user-avatar">
             <span id="nav-user-label">Me</span>
@@ -112,26 +238,19 @@
     </div>
 </div>
 
-<!-- Overlays (Ranking, Search, Global) - No Style Changes -->
+<!-- All Overlays with Original Design -->
 <div id="rank-panel" class="full-screen-overlay">
     <div class="glass-top">
         <div class="back-arrow" onclick="toggleGlassOverlay('rank-panel', false)"><svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></div>
         <span style="font-weight:700;">Daily Ranking</span>
     </div>
-    <div style="flex:1; overflow-y:auto;" id="rankScroll">
-        <div class="rank-top">
-            <div class="user-podium"><img src="https://i.pravatar.cc/100?u=a2" class="podium-avatar"><span>User_2</span></div>
-            <div class="user-podium rank-gold"><img src="https://i.pravatar.cc/100?u=a1" class="podium-avatar"><span>TOP_ONE</span></div>
-            <div class="user-podium"><img src="https://i.pravatar.cc/100?u=a3" class="podium-avatar"><span>User_3</span></div>
-        </div>
-        <div id="extendedRankList" style="padding:10px;"></div>
-    </div>
+    <div id="extendedRankList" style="flex:1; overflow-y:auto;"></div>
 </div>
 
 <div id="search-panel" class="full-screen-overlay">
     <div class="glass-top">
         <div class="back-arrow" onclick="toggleGlassOverlay('search-panel', false)"><svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></div>
-        <input type="text" id="queryInput" placeholder="Search by ID" style="flex:1; background:transparent; border:none; color:white; outline:none;" oninput="executeSearch()">
+        <input type="text" id="queryInput" placeholder="Search ID" style="flex:1; background:transparent; border:none; color:white; outline:none; font-size:16px;" oninput="executeSearch()">
     </div>
     <div id="searchResults" style="padding:20px;"></div>
 </div>
@@ -141,23 +260,23 @@
         <div class="back-arrow" onclick="toggleGlassOverlay('global-panel', false)"><svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></div>
         <span style="font-weight:700;">Global Regions</span>
     </div>
-    <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; padding:20px;">
-        <div style="background:var(--card-bg); padding:15px; border-radius:12px;">🇧🇩 Bangladesh</div>
-        <div style="background:var(--card-bg); padding:15px; border-radius:12px;">🇮🇳 India</div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:15px;">
+        <div style="background:var(--card-bg); padding:15px; border-radius:10px; text-align:center;">🇧🇩 BD</div>
+        <div style="background:var(--card-bg); padding:15px; border-radius:10px; text-align:center;">🇮🇳 India</div>
     </div>
 </div>
 
-<!-- Room View -->
+<!-- Audio Room View -->
 <div id="room-view">
-    <div style="padding:20px; display:flex; justify-content:space-between; align-items:center; background:rgba(0,0,0,0.2);">
-        <div style="display:flex; align-items:center; gap:12px;">
-            <div style="background:var(--primary); width:42px; height:42px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:900;">P</div>
+    <div style="padding:15px; display:flex; justify-content:space-between; align-items:center; background:rgba(0,0,0,0.3);">
+        <div style="display:flex; align-items:center; gap:10px;">
+            <div style="background:var(--primary); width:35px; height:35px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:12px;">P</div>
             <div>
-                <div id="currentRoomName" style="font-weight:800; font-size:15px;">Party Room</div>
+                <div id="currentRoomName" style="font-weight:700; font-size:14px;">Room</div>
                 <div style="font-size:10px; color:var(--gold);" id="room-pata-id">ID: 000000</div>
             </div>
         </div>
-        <div onclick="leaveRoom()" style="font-size:26px; padding:5px;">✕</div>
+        <div onclick="leaveRoom()" style="font-size:22px; padding:5px;">✕</div>
     </div>
     <div class="grid-seats">
         <script>
@@ -165,220 +284,144 @@
                 document.write(`
                     <div class="seat-unit" onclick="toggleSeat(${i})">
                         <div class="seat-orb" id="orb-${i}">👤</div>
-                        <div style="font-size:11px; color:#555;" id="user-${i}">Empty</div>
+                        <div style="font-size:10px; color:#666;" id="user-${i}">Empty</div>
                     </div>
                 `);
             }
         </script>
     </div>
-    <!-- Mic control -->
-    <div style="margin-top:auto; padding:30px; display:flex; justify-content:center;">
-        <div id="mic-toggle" style="width:60px; height:60px; background:rgba(255,255,255,0.1); border-radius:50%; display:none; align-items:center; justify-content:center; font-size:24px;" onclick="toggleMic()">🎙️</div>
+    <div style="margin-top:auto; padding-bottom:40px; display:flex; justify-content:center;">
+        <div id="mic-toggle" style="width:55px; height:55px; background:rgba(255,255,255,0.1); border-radius:50%; display:none; align-items:center; justify-content:center; font-size:20px;" onclick="toggleMic()">🎙️</div>
     </div>
 </div>
 
 <script>
-    /* ==========================================
-       CONFIG & INIT (NO CHANGES TO ORIGINAL IDS)
-       ========================================== */
-    const ZEGO_APP_ID = 1958175668;
-    const ZEGO_APP_SIGN = '755b86b05e1eb51001015cbbaa994ba53bec16b9f29dc9eaa8583eda083bf59a';
+    /* FINAL MASTER AUTH PROFESSIONAL CONFIG
+       (DO NOT ALTER DATES OR IDS)
+    */
+    const ZEGO_ID = 1958175668;
+    const ZEGO_SIGN = '755b86b05e1eb51001015cbbaa994ba53bec16b9f29dc9eaa8583eda083bf59a';
     
-    const firebaseConf = JSON.parse(__firebase_config);
-    firebase.initializeApp(firebaseConf);
+    const firebaseConfig = JSON.parse(__firebase_config);
+    firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.firestore();
     const appId = typeof __app_id !== 'undefined' ? __app_id : 'pata-live-master';
 
-    let zegoEngine = null;
-    let activeUserData = null;
-    let isMicOn = false;
-    let currentRoomId = null;
-    let mySeat = null;
+    let zego = null, activeUser = null, micOn = false, curRoom = null, seatIdx = null;
 
-    window.onload = () => {
-        refreshFeed();
-        initAuth();
-    };
+    window.onload = () => { refreshFeed(); initUser(); };
 
-    /* ==========================================
-       SECTION 1: USER AUTH & DATABASE
-       ========================================== */
-    async function initAuth() {
+    async function initUser() {
         auth.onAuthStateChanged(async (user) => {
             if (user) {
-                const docRef = db.collection('artifacts').doc(appId).collection('users').doc(user.uid).collection('profile').doc('info');
-                docRef.onSnapshot((snap) => {
-                    if (snap.exists) {
-                        activeUserData = snap.data();
-                        activeUserData.uid = user.uid;
-                        updateUI();
+                const doc = db.collection('artifacts').doc(appId).collection('users').doc(user.uid).collection('profile').doc('info');
+                doc.onSnapshot((s) => {
+                    if (s.exists) {
+                        activeUser = s.data(); activeUser.uid = user.uid;
+                        document.getElementById('nav-user-avatar').src = activeUser.avatar;
+                        document.getElementById('nav-user-label').innerText = activeUser.name;
+                        document.getElementById('room-pata-id').innerText = "ID: " + activeUser.pataId;
                     } else {
-                        const newUser = {
+                        doc.set({
                             name: "Guest_" + user.uid.slice(0,4),
                             pataId: Math.floor(100000 + Math.random() * 900000).toString(),
                             avatar: `https://i.pravatar.cc/100?u=${user.uid}`,
                             level: 1
-                        };
-                        docRef.set(newUser);
+                        });
                     }
                 });
-            } else {
-                auth.signInAnonymously();
-            }
+            } else { auth.signInAnonymously(); }
         });
-    }
-
-    function updateUI() {
-        document.getElementById('nav-user-avatar').src = activeUserData.avatar;
-        document.getElementById('nav-user-label').innerText = activeUserData.name;
-        document.getElementById('room-pata-id').innerText = "ID: " + activeUserData.pataId;
     }
 
     async function handleProfileEdit() {
-        const n = prompt("আপনার নাম লিখুন:", activeUserData.name);
-        if(n) await db.collection('artifacts').doc(appId).collection('users').doc(activeUserData.uid).collection('profile').doc('info').update({name: n});
+        const n = prompt("নাম পরিবর্তন করুন:", activeUser.name);
+        if(n) await db.collection('artifacts').doc(appId).collection('users').doc(activeUser.uid).collection('profile').doc('info').update({name: n});
     }
 
-    /* ==========================================
-       SECTION 2: ZEGO VOICE ENGINE
-       ========================================== */
-    async function initZego() {
-        if(zegoEngine) return;
-        zegoEngine = new ZegoExpressEngine(ZEGO_APP_ID, ZEGO_APP_SIGN);
-        
-        zegoEngine.on('roomStateUpdate', (roomID, state) => {
-            console.log("Room state:", state);
-        });
-
-        zegoEngine.on('publisherStateUpdate', result => {
-            console.log("Publisher state:", result.state);
-        });
-
-        zegoEngine.on('playerStateUpdate', result => {
-            console.log("Player state:", result.state);
-        });
-
-        // Remote audio stream handling
-        zegoEngine.on('roomStreamUpdate', async (roomID, updateType, streamList) => {
-            if (updateType === 'ADD') {
-                for (const stream of streamList) {
-                    await zegoEngine.startPlayingStream(stream.streamID);
-                }
-            }
-        });
-    }
-
+    /* Voice Logic */
     async function joinAudioRoom(name) {
         document.getElementById('room-view').style.display = 'flex';
         document.getElementById('currentRoomName').innerText = name;
-        currentRoomId = "room_" + name.replace(/\s/g, '_');
+        curRoom = "room_" + name.replace(/\s/g, '');
+        if(!zego) zego = new ZegoExpressEngine(ZEGO_ID, ZEGO_SIGN);
         
-        await initZego();
-        try {
-            await zegoEngine.loginRoom(currentRoomId, activeUserData.uid, { userName: activeUserData.name });
-            console.log("Logged into voice room");
-        } catch(e) { console.error(e); }
+        zego.on('roomStreamUpdate', async (id, type, streams) => {
+            if (type === 'ADD') { for (const s of streams) await zego.startPlayingStream(s.streamID); }
+        });
+
+        try { await zego.loginRoom(curRoom, activeUser.uid, { userName: activeUser.name }); } catch(e) {}
     }
 
     async function leaveRoom() {
-        if(isMicOn) await toggleMic();
-        if(mySeat) toggleSeat(mySeat); // leave seat
-        await zegoEngine.logoutRoom(currentRoomId);
+        if(micOn) await toggleMic();
+        if(seatIdx) toggleSeat(seatIdx);
+        await zego.logoutRoom(curRoom);
         document.getElementById('room-view').style.display = 'none';
-        currentRoomId = null;
+        curRoom = null;
     }
 
-    async function toggleSeat(i) {
-        const orb = document.getElementById(`orb-${i}`);
-        const name = document.getElementById(`user-${i}`);
-
-        if (mySeat === i) {
-            // Leave seat
-            orb.innerHTML = '👤';
-            orb.classList.remove('active');
-            name.innerText = 'Empty';
-            name.style.color = '#555';
-            mySeat = null;
+    function toggleSeat(i) {
+        const orb = document.getElementById(`orb-${i}`), name = document.getElementById(`user-${i}`);
+        if (seatIdx === i) {
+            orb.innerHTML = '👤'; orb.classList.remove('active'); name.innerText = 'Empty';
+            name.style.color = '#666'; seatIdx = null;
             document.getElementById('mic-toggle').style.display = 'none';
-            if(isMicOn) toggleMic();
-        } else if (!mySeat) {
-            // Occupy seat
-            orb.innerHTML = `<img src="${activeUserData.avatar}">`;
-            orb.classList.add('active');
-            name.innerText = activeUserData.name;
-            name.style.color = 'white';
-            mySeat = i;
+            if(micOn) toggleMic();
+        } else if (!seatIdx) {
+            orb.innerHTML = `<img src="${activeUser.avatar}">`;
+            orb.classList.add('active'); name.innerText = activeUser.name;
+            name.style.color = 'white'; seatIdx = i;
             document.getElementById('mic-toggle').style.display = 'flex';
         }
     }
 
     async function toggleMic() {
-        if (!zegoEngine || !mySeat) return;
-        const btn = document.getElementById('mic-toggle');
-        const orb = document.getElementById(`orb-${mySeat}`);
-
-        if (!isMicOn) {
-            const streamID = `stream_${activeUserData.uid}_${Date.now()}`;
-            const localStream = await zegoEngine.createStream({ camera: { audio: true, video: false } });
-            zegoEngine.startPublishingStream(streamID, localStream);
-            btn.style.background = 'var(--primary)';
-            orb.classList.add('speaking');
-            isMicOn = true;
+        if (!zego || !seatIdx) return;
+        const btn = document.getElementById('mic-toggle'), orb = document.getElementById(`orb-${seatIdx}`);
+        if (!micOn) {
+            const sid = `stream_${activeUser.uid}`;
+            const s = await zego.createStream({ camera: { audio: true, video: false } });
+            zego.startPublishingStream(sid, s);
+            btn.style.background = 'var(--primary)'; orb.classList.add('speaking');
+            micOn = true;
         } else {
-            zegoEngine.stopPublishingStream(`stream_${activeUserData.uid}`);
-            btn.style.background = 'rgba(255,255,255,0.1)';
-            orb.classList.remove('speaking');
-            isMicOn = false;
+            zego.stopPublishingStream(`stream_${activeUser.uid}`);
+            btn.style.background = 'rgba(255,255,255,0.1)'; orb.classList.remove('speaking');
+            micOn = false;
         }
     }
 
-    /* ==========================================
-       SECTION 3: ORIGINAL UI LOGIC (NO CHANGES)
-       ========================================== */
+    /* UI Fixes */
     function refreshFeed() {
-        const grid = document.getElementById('audioGrid');
-        grid.innerHTML = '';
+        const g = document.getElementById('audioGrid'); g.innerHTML = '';
         for(let i=1; i<=16; i++) {
-            grid.innerHTML += `
+            g.innerHTML += `
                 <div class="room-card" onclick="joinAudioRoom('Premium Room ${i}')">
-                    <img src="https://picsum.photos/seed/${i+500}/400/500">
+                    <img src="https://picsum.photos/seed/${i+100}/300/400">
                     <div class="live-tag">LIVE</div>
                     <div class="card-details">
-                        <div style="font-weight:700; font-size:13px;">Pata Room ${i}</div>
-                        <div style="font-size:10px; color:#aaa;">ID: 100${i} | 1.2K Online</div>
+                        <div style="font-weight:700; font-size:12px;">Pata Room ${i}</div>
+                        <div style="font-size:9px; color:#ccc;">ID: 200${i} | 152 Online</div>
                     </div>
                 </div>`;
         }
     }
 
-    function toggleGlassOverlay(id, status) {
-        document.getElementById(id).style.display = status ? 'flex' : 'none';
-        if(id === 'rank-panel' && status) buildRankings();
-    }
-
-    function buildRankings() {
-        const list = document.getElementById('extendedRankList');
-        let content = '';
-        for(let i=4; i<=20; i++) {
-            content += `<div style="display:flex; align-items:center; padding:15px; border-bottom:1px solid #1a1a2e;"><span style="width:30px; font-weight:900;">${i}</span><img src="https://i.pravatar.cc/100?u=r${i}" style="width:40px; height:40px; border-radius:50%; margin-right:15px;"><div style="flex:1;">User_${i}</div><div style="color:var(--gold);">${(25-i)*10} XP</div></div>`;
+    function toggleGlassOverlay(id, s) { 
+        document.getElementById(id).style.display = s ? 'flex' : 'none'; 
+        if(id === 'rank-panel' && s) {
+            let l = document.getElementById('extendedRankList'), h = '';
+            for(let i=1; i<=10; i++) h += `<div style="display:flex; align-items:center; padding:15px; border-bottom:1px solid #1a1a2e;"><span style="width:25px;">${i}</span><img src="https://i.pravatar.cc/100?u=r${i}" style="width:35px; border-radius:50%; margin-right:10px;"><span>User_${i}</span></div>`;
+            l.innerHTML = h;
         }
-        list.innerHTML = content;
     }
 
     function changeFeedTab(el) {
         document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
-        el.classList.add('active');
-        refreshFeed();
+        el.classList.add('active'); refreshFeed();
     }
-    
-    function executeSearch() {
-        const val = document.getElementById('queryInput').value;
-        const out = document.getElementById('searchResults');
-        if(!val) { out.innerHTML = ''; return; }
-        out.innerHTML = `<div style="background:var(--card-bg); padding:15px; border-radius:12px; display:flex; align-items:center; gap:10px;"><img src="https://i.pravatar.cc/100?u=${val}" style="width:45px; height:45px; border-radius:50%;"><div style="flex:1;">Found User ${val}</div><button style="background:var(--primary); border:none; color:white; padding:5px 15px; border-radius:15px;">Follow</button></div>`;
-    }
-
 </script>
 </body>
 </html>

@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Pata Live - Original Master Pro</title>
     
-    <!-- Firebase & SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
@@ -21,27 +20,25 @@
             --card-bg: #1e1e30;
             --text-gray: #b0b0b0;
             --gold: #FFD700;
+            --glass: rgba(255, 255, 255, 0.05);
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
         body { font-family: 'Inter', sans-serif; background: var(--bg); color: white; overflow-x: hidden; }
 
-        .app-shell { display: flex; flex-direction: column; min-height: 100vh; }
-
-        /* Auth UI Extension */
-        #auth-screen { position: fixed; inset: 0; background: var(--bg); z-index: 5000; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 25px; }
+        /* Auth Screen */
+        #auth-screen { position: fixed; inset: 0; background: var(--bg); z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 25px; }
         .auth-box { width: 100%; max-width: 350px; }
         .input-row { display: flex; gap: 10px; margin-bottom: 15px; }
-        .country-code { width: 70px; background: #1a1a2e; border: 1px solid #333; border-radius: 12px; color: white; text-align: center; height: 50px; }
-        .auth-input { flex: 1; height: 50px; background: #1a1a2e; border: 1px solid #333; border-radius: 12px; padding: 0 15px; color: white; outline: none; }
+        .country-code { width: 80px; background: var(--card-bg); border: 1px solid #333; border-radius: 12px; color: white; text-align: center; height: 50px; font-weight: 600; }
+        .auth-input { flex: 1; height: 50px; background: var(--card-bg); border: 1px solid #333; border-radius: 12px; padding: 0 15px; color: white; outline: none; }
         .social-btn { width: 100%; height: 50px; border-radius: 25px; border: 1px solid #444; background: transparent; color: white; display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 10px; font-weight: 500; }
-
-        .top-bar { 
-            height: 60px; display: flex; align-items: center; justify-content: space-between; 
-            padding: 0 15px; background: var(--bg); position: sticky; top: 0; z-index: 1000; 
-        }
+        
+        /* App Structure */
+        .app-shell { display: flex; flex-direction: column; min-height: 100vh; }
+        .top-bar { height: 60px; display: flex; align-items: center; justify-content: space-between; padding: 0 15px; background: var(--bg); position: sticky; top: 0; z-index: 1000; }
         .header-tabs-container { flex: 1; overflow-x: auto; white-space: nowrap; scrollbar-width: none; }
-        .header-tabs { display: flex; gap: 20px; align-items: center; }
+        .header-tabs { display: flex; gap: 18px; align-items: center; }
         .h-tab { font-size: 14px; color: var(--text-gray); font-weight: 600; cursor: pointer; padding: 8px 0; position: relative; }
         .h-tab.active { color: white; font-size: 16px; }
         .h-tab.active::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 3px; background: var(--primary); border-radius: 10px; }
@@ -51,6 +48,7 @@
         .banner-track { display: flex; width: 300%; height: 100%; transition: 0.5s; }
         .banner-track img { width: 33.33%; height: 100%; object-fit: cover; }
 
+        /* Main Viewport */
         .screen-container { flex: 1; padding: 12px; padding-bottom: 100px; }
         .feed-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .live-card { aspect-ratio: 1/1.25; border-radius: 20px; overflow: hidden; position: relative; background: var(--card-bg); border: 1px solid rgba(255,255,255,0.1); }
@@ -58,140 +56,156 @@
         .live-tag { position: absolute; top: 10px; left: 10px; background: var(--primary); font-size: 9px; font-weight: 800; padding: 3px 8px; border-radius: 20px; z-index: 5; }
         .card-footer { position: absolute; bottom: 0; width: 100%; padding: 12px; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); }
 
-        .bottom-nav-pro { 
-            position: fixed; bottom: 0; width: 100%; height: 80px; 
-            background: rgba(15, 2, 31, 0.98); backdrop-filter: blur(20px); 
-            display: flex; align-items: center; justify-content: space-evenly; 
-            border-top: 1px solid rgba(255, 255, 255, 0.1); z-index: 2000;
-        }
+        /* Navigation */
+        .bottom-nav-pro { position: fixed; bottom: 0; width: 100%; height: 80px; background: rgba(15, 2, 31, 0.98); backdrop-filter: blur(20px); display: flex; align-items: center; justify-content: space-evenly; border-top: 1px solid rgba(255, 255, 255, 0.1); z-index: 2000; }
         .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-gray); font-size: 10px; cursor: pointer; min-width: 50px; }
         .nav-item.active { color: var(--primary); }
         .nav-item span { font-size: 24px; margin-bottom: 4px; }
-        
-        .nav-mic-btn { 
-            width: 65px; height: 65px; background: linear-gradient(45deg, var(--secondary), var(--primary)); 
-            border-radius: 50%; display: flex; align-items: center; justify-content: center; 
-            font-size: 30px; color: white; position: relative; top: -25px; 
-            border: 4px solid var(--bg); box-shadow: 0 8px 25px rgba(255, 45, 85, 0.5); 
-            cursor: pointer; z-index: 2001;
-        }
+        .nav-mic-btn { width: 65px; height: 65px; background: linear-gradient(45deg, var(--secondary), var(--primary)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; color: white; position: relative; top: -25px; border: 4px solid var(--bg); box-shadow: 0 8px 25px rgba(255, 45, 85, 0.5); cursor: pointer; z-index: 2001; }
 
-        /* Room Overlay UI */
-        #room-overlay { position: fixed; inset: 0; background: linear-gradient(to bottom, #1e0836, #0b0118); z-index: 6000; display: none; flex-direction: column; }
-        .room-header { padding: 20px 15px; display: flex; justify-content: space-between; align-items: center; }
-        .host-pill { display: flex; align-items: center; gap: 8px; background: rgba(0,0,0,0.4); padding: 5px 12px 5px 5px; border-radius: 25px; }
-        .host-pill img { width: 35px; height: 35px; border-radius: 50%; border: 2px solid var(--gold); }
-        .seats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; padding: 20px; justify-items: center; }
-        .seat { display: flex; flex-direction: column; align-items: center; gap: 6px; }
-        .seat-circle { width: 75px; height: 75px; border-radius: 50%; background: rgba(255,255,255,0.05); border: 2px dashed #444; display: flex; align-items: center; justify-content: center; position: relative; }
-        .seat-circle.occupied { border: 2px solid var(--gold); border-style: solid; }
+        /* Overlays (Global, Ranking, Search, Room) */
+        .overlay-page { position: fixed; inset: 0; background: var(--bg); z-index: 8000; display: none; flex-direction: column; }
+        .page-header { height: 60px; display: flex; align-items: center; padding: 0 15px; background: var(--glass); border-bottom: 1px solid #333; }
+        .back-btn { font-size: 24px; margin-right: 15px; cursor: pointer; }
+
+        /* Ranking UI */
+        .rank-top { display: flex; align-items: flex-end; justify-content: center; gap: 20px; padding: 30px 10px; background: linear-gradient(to bottom, #2a0845, var(--bg)); }
+        .rank-podium { display: flex; flex-direction: column; align-items: center; }
+        .podium-img { width: 60px; height: 60px; border-radius: 50%; border: 3px solid #ccc; object-fit: cover; }
+        .rank-1 .podium-img { width: 85px; height: 85px; border-color: var(--gold); }
+        .rank-list-item { display: flex; align-items: center; padding: 12px 20px; border-bottom: 1px solid #222; }
+        .rank-num { width: 30px; font-weight: bold; color: var(--text-gray); }
+
+        /* Global UI */
+        .country-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; padding: 20px; }
+        .country-card { background: var(--card-bg); padding: 15px; border-radius: 12px; display: flex; align-items: center; gap: 10px; }
+
+        /* Room UI */
+        #room-view { position: fixed; inset: 0; background: linear-gradient(180deg, #1e0836 0%, var(--bg) 100%); z-index: 9000; display: none; flex-direction: column; }
+        .room-top { padding: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .host-pills { display: flex; align-items: center; gap: 8px; background: rgba(0,0,0,0.3); padding: 5px 12px 5px 5px; border-radius: 25px; }
+        .host-pills img { width: 35px; height: 35px; border-radius: 50%; border: 1.5px solid var(--gold); }
+        .seats-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; padding: 30px 20px; }
+        .seat-item { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+        .seat-circle { width: 75px; height: 75px; border-radius: 50%; background: rgba(255,255,255,0.05); border: 2px dashed rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; position: relative; }
+        .seat-circle.active { border: 2.5px solid var(--gold); border-style: solid; }
         .seat-circle img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
-        .seat-name { font-size: 11px; color: #ccc; max-width: 75px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-        .room-footer { height: 70px; display: flex; justify-content: space-around; align-items: center; background: rgba(0,0,0,0.2); }
     </style>
 </head>
 <body>
 
-<!-- Auth View -->
+<!-- User Auth -->
 <div id="auth-screen">
     <div class="auth-box">
-        <h1 style="text-align:center; font-weight:900; margin-bottom:30px; font-size:32px;">Pata Live</h1>
+        <h1 style="text-align:center; font-weight:900; margin-bottom:5px; font-size:36px;">Pata Live</h1>
+        <p style="text-align:center; color:var(--text-gray); margin-bottom:30px;">Premium Audio Rooms</p>
         <div class="input-row">
             <input type="text" class="country-code" value="+880">
-            <input type="number" id="phone" class="auth-input" placeholder="Phone Number">
+            <input type="number" id="authPhone" class="auth-input" placeholder="Phone Number">
         </div>
-        <input type="password" id="pass" class="auth-input" placeholder="Password" style="width:100%; margin-bottom:15px;">
-        <button class="social-btn" style="background:var(--primary); border:none; font-weight:bold;" onclick="performLogin()">Login</button>
-        
-        <div style="text-align:center; margin:20px 0; color:#666;">Or</div>
-        
-        <button class="social-btn" onclick="performLogin()"><span>G</span> Continue with Google</button>
-        <button class="social-btn" onclick="performLogin()"><span>f</span> Continue with Facebook</button>
+        <input type="password" id="authPass" class="auth-input" placeholder="Password" style="width:100%; margin-bottom:15px;">
+        <button class="social-btn" style="background:var(--primary); border:none; font-weight:700;" onclick="handleAppLogin()">Log In</button>
+        <div style="text-align:center; margin:15px; color:#555;">Or</div>
+        <button class="social-btn" onclick="handleAppLogin()"><span>G</span> Google Login</button>
+        <button class="social-btn" onclick="handleAppLogin()"><span>f</span> Facebook Login</button>
     </div>
 </div>
 
-<div class="app-shell" id="app-content" style="display:none;">
+<div class="app-shell" id="app-main" style="display:none;">
     <div class="top-bar">
         <div class="header-tabs-container">
             <div class="header-tabs">
-                <div class="h-tab" onclick="setTab(this)">Follow</div>
-                <div class="h-tab active" onclick="setTab(this)">Popular</div>
-                <div class="h-tab" onclick="setTab(this)">New</div>
-                <div class="h-tab" onclick="setTab(this)">Explore</div>
-                <div class="h-tab" onclick="setTab(this)">Global</div>
+                <div class="h-tab" onclick="switchTab('follow', this)">Follow</div>
+                <div class="h-tab active" onclick="switchTab('popular', this)">Popular</div>
+                <div class="h-tab" onclick="switchTab('new', this)">New</div>
+                <div class="h-tab" onclick="switchTab('explore', this)">Explore</div>
+                <div class="h-tab" onclick="switchTab('global', this)">Global</div>
             </div>
         </div>
         <div style="display:flex; gap:15px; font-size:20px; padding-left:10px; align-items:center;">
-            <span onclick="alert('Ranking Board')">🏆</span>
-            <span onclick="alert('Search')">🔍</span>
+            <span onclick="openOverlay('ranking-overlay')">🏆</span>
+            <span onclick="openOverlay('search-overlay')">🔍</span>
         </div>
     </div>
 
     <div class="banner-section">
         <div class="banner-container">
             <div class="banner-track" id="bTrack">
-                <img src="https://picsum.photos/seed/s1/800/400">
-                <img src="https://picsum.photos/seed/s2/800/400">
-                <img src="https://picsum.photos/seed/s3/800/400">
+                <img src="https://picsum.photos/seed/pata1/800/400">
+                <img src="https://picsum.photos/seed/pata2/800/400">
+                <img src="https://picsum.photos/seed/pata3/800/400">
             </div>
         </div>
     </div>
 
     <div class="screen-container">
-        <div class="feed-grid" id="gridPopular"></div>
+        <div class="feed-grid" id="mainFeed"></div>
     </div>
 
     <nav class="bottom-nav-pro">
-        <div class="nav-item active"><span>🏠</span>Home</div>
+        <div class="nav-item active" onclick="location.reload()"><span>🏠</span>Home</div>
         <div class="nav-item"><span>🕒</span>History</div>
-        <div class="nav-mic-btn" onclick="startLive()">🎙️</div>
+        <div class="nav-mic-btn" onclick="createNewRoom()">🎙️</div>
         <div class="nav-item"><span>💬</span>Message</div>
-        <div class="nav-item" onclick="editProfile()"><span>👤</span>Me</div>
+        <div class="nav-item" onclick="editMyProfile()"><span>👤</span>Me</div>
     </nav>
 </div>
 
-<!-- Professional Room UI -->
-<div id="room-overlay">
-    <div class="room-header">
-        <div class="host-pill">
-            <img id="hImg" src="https://i.pravatar.cc/100">
+<!-- Global Overlay -->
+<div id="global-overlay" class="overlay-page">
+    <div class="page-header"><span class="back-btn" onclick="closeOverlay('global-overlay')">←</span> Global Regions</div>
+    <div class="country-grid" id="countryGrid"></div>
+    <div class="feed-grid" style="padding:15px;" id="globalFeed"></div>
+</div>
+
+<!-- Ranking Overlay -->
+<div id="ranking-overlay" class="overlay-page">
+    <div class="page-header"><span class="back-btn" onclick="closeOverlay('ranking-overlay')">←</span> Daily Ranking</div>
+    <div id="rankingContent" style="overflow-y:auto; flex:1;"></div>
+</div>
+
+<!-- Search Overlay -->
+<div id="search-overlay" class="overlay-page">
+    <div class="page-header">
+        <span class="back-btn" onclick="closeOverlay('search-overlay')">←</span>
+        <input type="text" id="searchInput" placeholder="Search friends by ID..." style="flex:1; background:transparent; border:none; color:white; outline:none;">
+        <span onclick="performUserSearch()">🔍</span>
+    </div>
+    <div id="searchResults" style="padding:20px;"></div>
+</div>
+
+<!-- Professional Room View -->
+<div id="room-view">
+    <div class="room-top">
+        <div class="host-pills">
+            <img id="room-host-img" src="">
             <div>
-                <div id="rName" style="font-size: 13px; font-weight: 700;">Party Room</div>
-                <div id="rId" style="font-size: 10px; color: var(--gold);">ID: 000000</div>
+                <div id="room-name-txt" style="font-size:12px; font-weight:800;">Party...</div>
+                <div id="room-id-txt" style="font-size:9px; color:var(--gold);">ID: 00000</div>
             </div>
         </div>
-        <div onclick="exitRoom()" style="font-size: 24px; padding: 5px;">✕</div>
+        <div onclick="exitCurrentRoom()" style="font-size:24px;">✕</div>
     </div>
-    
-    <div class="seats-grid" id="seats">
-        <!-- 3x3 Grid Logic -->
+    <div class="seats-container" id="seatsGrid">
         <script>
-            for(let i=1; i<=9; i++){
+            for(let i=1; i<=9; i++) {
                 document.write(`
-                    <div class="seat" onclick="occupySeat(${i})">
-                        <div class="seat-circle" id="s-circ-${i}">
-                            <span style="font-size:24px; opacity:0.1;">👤</span>
-                        </div>
-                        <div class="seat-name" id="s-name-${i}">Seat ${i}</div>
+                    <div class="seat-item" onclick="handleSeatAction(${i})">
+                        <div class="seat-circle" id="seat-${i}"><span style="opacity:0.2; font-size:24px;">👤</span></div>
+                        <div style="font-size:10px; color:#777;" id="seat-name-${i}">Empty</div>
                     </div>
                 `);
             }
         </script>
     </div>
-
-    <div id="chat-box" style="flex:1; padding:15px; overflow-y:auto; font-size:13px; color:#bbb;">
-        <div style="color:var(--gold);">Welcome to Pata Live Room! Enjoy your time.</div>
-    </div>
-
-    <div class="room-footer">
-        <div style="font-size:24px;">🎙️</div>
-        <div style="font-size:24px;" onclick="sendComment()">💬</div>
-        <div style="font-size:40px; background:var(--primary); width:60px; height:60px; border-radius:50%; display:flex; align-items:center; justify-content:center;" onclick="alert('Gift Panel')">🎁</div>
-        <div style="font-size:24px;">⚙️</div>
+    <div id="room-chats" style="flex:1; padding:15px; overflow-y:auto; font-size:13px;"></div>
+    <div style="height:70px; display:flex; align-items:center; justify-content:space-around; background:rgba(0,0,0,0.3);">
+        <span>🎙️</span><span>💬</span><span style="font-size:35px; background:var(--primary); width:55px; height:55px; border-radius:50%; display:flex; align-items:center; justify-content:center;">🎁</span><span>⚙️</span>
     </div>
 </div>
 
 <script>
+    // Firebase Config
     const firebaseConfig = {
         apiKey: "AIzaSyD5vRGyz3qdyqhnt2T9qmlPlTeQKV5Hlbw",
         authDomain: "pata-live.firebaseapp.com",
@@ -202,130 +216,155 @@
         appId: "1:644016212127:web:214bc06f4677c8188e7aaa"
     };
     firebase.initializeApp(firebaseConfig);
-    const database = firebase.database();
-    
-    let user = { id: "12345", name: "MD:Ayan", avatar: "https://i.pravatar.cc/150?u=12345" };
-    let currentRoom = null;
+    const db = firebase.database();
 
-    // --- Tab Handling ---
-    function setTab(el) {
+    let currentUser = { uid: "1001", name: "MD:Ayan", avatar: "https://i.pravatar.cc/150?u=ayan", following: ["1002", "1003"] };
+    let activeRoom = null;
+
+    // --- Authentication ---
+    function handleAppLogin() {
+        document.getElementById('auth-screen').style.display = 'none';
+        document.getElementById('app-main').style.display = 'flex';
+        loadFeed('popular');
+    }
+
+    // --- Tab Switching ---
+    function switchTab(type, el) {
         document.querySelectorAll('.h-tab').forEach(t => t.classList.remove('active'));
         el.classList.add('active');
-    }
-
-    // --- Auth Logic ---
-    function performLogin() {
-        document.getElementById('auth-screen').style.display = 'none';
-        document.getElementById('app-content').style.display = 'flex';
-        initFeed();
-    }
-
-    // --- Profile Handling ---
-    function editProfile() {
-        const n = prompt("আপনার নতুন নাম লিখুন:", user.name);
-        if(n) {
-            user.name = n;
-            alert("নাম আপডেট হয়েছে!");
+        
+        if(type === 'global') {
+            openOverlay('global-overlay');
+            loadGlobalCountries();
+        } else {
+            loadFeed(type);
         }
     }
 
-    // --- Feed Sync ---
-    function initFeed() {
-        database.ref('live_rooms').on('value', (snap) => {
-            const grid = document.getElementById('gridPopular');
-            if(!grid) return;
-            grid.innerHTML = '';
-            const data = snap.val();
-            if(data){
-                Object.keys(data).forEach(key => {
-                    const room = data[key];
-                    grid.innerHTML += `
-                        <div class="live-card" onclick="joinRoom('${key}')">
-                            <img src="https://picsum.photos/seed/${key}/400/500">
-                            <div class="live-tag">LIVE</div>
-                            <div class="card-footer">
-                                <div style="font-weight:700;">${room.name}</div>
-                                <div style="font-size:10px; color:#bbb;">Host: ${room.host}</div>
-                            </div>
-                        </div>`;
-                });
+    // --- Feed Loader (Follow, Popular, New, Explore) ---
+    function loadFeed(type) {
+        db.ref('live_rooms').once('value', snap => {
+            const container = document.getElementById('mainFeed');
+            container.innerHTML = '';
+            let rooms = [];
+            snap.forEach(c => { rooms.push({id: c.key, ...c.val()}); });
+
+            // Random 16 Logic
+            let filtered = rooms.slice(0, 16); 
+            
+            if(type === 'follow') {
+                filtered = rooms.filter(r => currentUser.following.includes(r.hostUid));
+            } else if(type === 'popular') {
+                filtered = rooms.sort((a,b) => (b.viewers || 0) - (a.viewers || 0));
+            } else if(type === 'new') {
+                filtered = rooms.reverse();
             }
+
+            filtered.forEach(room => {
+                container.innerHTML += `
+                    <div class="live-card" onclick="joinAudioRoom('${room.id}')">
+                        <img src="${room.hostImg || 'https://picsum.photos/seed/'+room.id+'/400/500'}">
+                        <div class="live-tag">LIVE</div>
+                        <div class="card-footer">
+                            <div style="font-weight:700;">${room.name}</div>
+                            <div style="font-size:10px; color:#bbb;">Host: ${room.host}</div>
+                        </div>
+                    </div>`;
+            });
         });
+    }
+
+    // --- Ranking Logic ---
+    function loadRanking() {
+        const content = document.getElementById('rankingContent');
+        const mockRanks = [
+            {id: "1002", name: "King J", score: "50k", img: "https://i.pravatar.cc/100?u=1"},
+            {id: "1003", name: "Queen S", score: "90k", img: "https://i.pravatar.cc/100?u=2"},
+            {id: "1004", name: "Boss A", score: "40k", img: "https://i.pravatar.cc/100?u=3"}
+        ];
+
+        let html = `<div class="rank-top">
+            <div class="rank-podium rank-2"><img src="${mockRanks[0].img}" class="podium-img"><p>${mockRanks[0].name}</p></div>
+            <div class="rank-podium rank-1"><img src="${mockRanks[1].img}" class="podium-img"><p>${mockRanks[1].name}</p></div>
+            <div class="rank-podium rank-3"><img src="${mockRanks[2].img}" class="podium-img"><p>${mockRanks[2].name}</p></div>
+        </div>`;
+
+        for(let i=4; i<=20; i++){
+            html += `<div class="rank-list-item">
+                <span class="rank-num">${i}</span>
+                <img src="https://i.pravatar.cc/50?u=${i}" style="width:40px; border-radius:50%; margin-right:15px;">
+                <div style="flex:1;">User_${i}</div>
+                <div style="color:var(--primary); font-weight:bold;">${20-i}k</div>
+            </div>`;
+        }
+        content.innerHTML = html;
+    }
+
+    // --- Global Logic ---
+    function loadGlobalCountries() {
+        const grid = document.getElementById('countryGrid');
+        const countries = [
+            {n: "Bangladesh", f: "🇧🇩"}, {n: "India", f: "🇮🇳"},
+            {n: "Pakistan", f: "🇵🇰"}, {n: "Saudi Arabia", f: "🇸🇦"},
+            {n: "Turkey", f: "🇹🇷"}, {n: "USA", f: "🇺🇸"},
+            {n: "Indonesia", f: "🇮🇩"}, {n: "Vietnam", f: "🇻🇳"}
+        ];
+        grid.innerHTML = countries.map(c => `
+            <div class="country-card" onclick="loadFeed('explore')">
+                <span style="font-size:24px;">${c.f}</span>
+                <span style="font-size:13px; font-weight:600;">${c.n}</span>
+            </div>
+        `).join('');
+    }
+
+    // --- Search Logic ---
+    function performUserSearch() {
+        const id = document.getElementById('searchInput').value;
+        const res = document.getElementById('searchResults');
+        if(!id) return;
+        res.innerHTML = `
+            <div style="background:var(--card-bg); padding:15px; border-radius:15px; display:flex; align-items:center; gap:15px;">
+                <img src="https://i.pravatar.cc/60?u=${id}" style="width:50px; border-radius:50%;">
+                <div style="flex:1;">
+                    <div style="font-weight:700;">User_${id}</div>
+                    <div style="font-size:11px; color:#777;">ID: ${id}</div>
+                </div>
+                <button style="background:var(--primary); border:none; color:white; padding:5px 15px; border-radius:20px; font-size:12px;">Follow</button>
+            </div>
+        `;
+    }
+
+    // --- Profile Edit ---
+    function editMyProfile() {
+        const n = prompt("আপনার নতুন নাম লিখুন:", currentUser.name);
+        if(n) { currentUser.name = n; alert("নাম আপডেট হয়েছে!"); }
     }
 
     // --- Audio Room Logic ---
-    async function startLive() {
-        const name = prompt("রুমের নাম:");
-        if(name) {
-            const rid = "R" + Math.floor(Math.random() * 900000);
-            await database.ref('live_rooms/' + rid).set({
-                name: name,
-                host: user.name,
-                hostId: user.id,
-                seats: { 1: { name: user.name, avatar: user.avatar } }
-            });
-            joinRoom(rid);
-        }
+    async function createNewRoom() {
+        const title = prompt("রুমের টাইটেল দিন:");
+        if(!title) return;
+        const rid = "R" + Math.floor(100000 + Math.random() * 900000);
+        await db.ref('live_rooms/' + rid).set({
+            name: title,
+            host: currentUser.name,
+            hostUid: currentUser.uid,
+            hostImg: currentUser.avatar,
+            seats: { 1: { uid: currentUser.uid, name: currentUser.name, img: currentUser.avatar } }
+        });
+        joinAudioRoom(rid);
     }
 
-    function joinRoom(id) {
-        currentRoom = id;
-        document.getElementById('room-overlay').style.display = 'flex';
-        database.ref('live_rooms/' + id).on('value', snap => {
+    function joinAudioRoom(id) {
+        activeRoom = id;
+        document.getElementById('room-view').style.display = 'flex';
+        db.ref('live_rooms/' + id).on('value', snap => {
             const data = snap.val();
             if(!data) return;
-            document.getElementById('rName').innerText = data.name;
-            document.getElementById('rId').innerText = "ID: " + id;
-            
-            for(let i=1; i<=9; i++){
-                const seat = data.seats ? data.seats[i] : null;
-                const circ = document.getElementById('s-circ-'+i);
-                const name = document.getElementById('s-name-'+i);
-                if(seat){
-                    circ.innerHTML = `<img src="${seat.avatar}">`;
-                    circ.classList.add('occupied');
-                    name.innerText = seat.name;
-                } else {
-                    circ.innerHTML = `<span style="font-size:24px; opacity:0.1;">👤</span>`;
-                    circ.classList.remove('occupied');
-                    name.innerText = "Empty";
-                }
-            }
-        });
-    }
+            document.getElementById('room-name-txt').innerText = data.name;
+            document.getElementById('room-id-txt').innerText = "ID: " + id;
+            document.getElementById('room-host-img').src = data.hostImg;
 
-    function occupySeat(num) {
-        if(!currentRoom) return;
-        database.ref(`live_rooms/${currentRoom}/seats/${num}`).set({
-            name: user.name,
-            avatar: user.avatar
-        });
-    }
-
-    function sendComment() {
-        const msg = prompt("আপনার বার্তা লিখুন:");
-        if(msg) {
-            const box = document.getElementById('chat-box');
-            box.innerHTML += `<div><b>${user.name}:</b> ${msg}</div>`;
-            box.scrollTop = box.scrollHeight;
-        }
-    }
-
-    function exitRoom() {
-        if(currentRoom) database.ref('live_rooms/' + currentRoom).off();
-        document.getElementById('room-overlay').style.display = 'none';
-        currentRoom = null;
-    }
-
-    // --- Banner Animation ---
-    let step = 0;
-    setInterval(() => {
-        step = (step + 1) % 3;
-        const track = document.getElementById('bTrack');
-        if(track) track.style.transform = `translateX(-${step * 33.33}%)`;
-    }, 3000);
-</script>
-
-</body>
-</html>
-
+            for(let i=1; i<=9; i++) {
+                const s = data.seats ? data.seats[i] : null;
+                const circ = document.getElemen

@@ -3,16 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Pata Live - অডিও আর্নিং প্ল্যাটফর্ম</title>
+    <title>Pata Live - অরিজিনাল</title>
     
-    <!-- PWA এবং মোবাইল অ্যাপ সেটিংস -->
+    <!-- PWA Settings -->
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#0b0118">
     <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22Pata%20Live%22,%22short_name%22:%22Pata%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22#0b0118%22,%22theme_color%22:%22#FF2D55%22}">
 
-    <!-- প্রয়োজনীয় SDK সমূহ -->
+    <!-- SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
@@ -23,234 +22,212 @@
     <style>
         :root {
             --primary: #FF2D55;
-            --secondary: #8E24AA;
             --bg: #0b0118;
             --glass: rgba(255, 255, 255, 0.08);
             --gold: #FFD700;
-            --text-gray: #b0b0b0;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
         body { font-family: 'Inter', sans-serif; background: var(--bg); color: white; height: 100vh; overflow: hidden; }
 
-        /* হেডার এবং ট্যাব */
-        .header { height: 60px; display: flex; align-items: center; justify-content: space-between; padding: 0 15px; background: var(--bg); position: sticky; top: 0; z-index: 1000; }
-        .tabs { display: flex; gap: 20px; }
-        .tab { font-size: 15px; color: var(--text-gray); font-weight: 600; cursor: pointer; padding-bottom: 5px; }
-        .tab.active { color: white; border-bottom: 3px solid var(--primary); }
+        /* Original Top Bar */
+        .top-bar { height: 60px; display: flex; align-items: center; justify-content: space-between; padding: 0 15px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .tabs { display: flex; gap: 15px; }
+        .tab { font-size: 14px; color: #888; font-weight: 600; cursor: pointer; }
+        .tab.active { color: white; border-bottom: 2px solid var(--primary); padding-bottom: 4px; }
 
-        /* রুম লিস্ট গ্রিড */
-        .feed { height: calc(100vh - 135px); overflow-y: auto; padding: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .card { aspect-ratio: 1/1.2; border-radius: 18px; background: #1e1e30; overflow: hidden; position: relative; border: 1px solid rgba(255,255,255,0.05); }
-        .card img { width: 100%; height: 100%; object-fit: cover; opacity: 0.7; }
-        .card-info { position: absolute; bottom: 0; padding: 10px; background: linear-gradient(transparent, rgba(0,0,0,0.9)); width: 100%; }
+        /* Room Grid */
+        .feed { height: calc(100vh - 135px); overflow-y: auto; padding: 10px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .room-card { aspect-ratio: 1/1.2; border-radius: 15px; background: #1a1a2e; overflow: hidden; position: relative; border: 1px solid rgba(255,255,255,0.05); }
+        .room-card img { width: 100%; height: 100%; object-fit: cover; opacity: 0.8; }
+        .room-info { position: absolute; bottom: 0; padding: 10px; background: linear-gradient(transparent, rgba(0,0,0,0.9)); width: 100%; }
 
-        /* গ্লাস ইফেক্ট ওভারলে (Search & Ranking) */
-        .overlay { position: fixed; inset: 0; background: var(--bg); z-index: 5000; display: none; flex-direction: column; animation: slideUp 0.3s ease; }
-        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        /* Professional Glass Overlays & Original Back Arrow */
+        .overlay { position: fixed; inset: 0; background: var(--bg); z-index: 5000; display: none; flex-direction: column; }
+        .glass-header { height: 65px; display: flex; align-items: center; padding: 0 15px; background: var(--glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.1); }
         
-        .glass-top { height: 65px; display: flex; align-items: center; padding: 0 15px; background: var(--glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.1); }
-        
-        /* প্রফেশনাল ব্যাক অ্যারো আইকন */
-        .back-icon { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; margin-right: 10px; border-radius: 50%; transition: background 0.2s; }
-        .back-icon:active { background: rgba(255,255,255,0.1); }
-        .back-icon svg { width: 26px; height: 26px; fill: none; stroke: white; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+        /* Your Professional Back Arrow Icon */
+        .back-arrow { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; margin-right: 10px; }
+        .back-arrow svg { width: 26px; height: 26px; fill: none; stroke: white; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
 
-        /* বটম নেভিগেশন */
-        .footer { position: fixed; bottom: 0; width: 100%; height: 75px; background: #0f021f; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid rgba(255,255,255,0.05); }
-        .footer-item { display: flex; flex-direction: column; align-items: center; font-size: 11px; color: var(--text-gray); }
-        .center-mic { width: 60px; height: 60px; background: linear-gradient(45deg, var(--secondary), var(--primary)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 26px; margin-top: -35px; border: 5px solid var(--bg); box-shadow: 0 5px 20px rgba(255, 45, 85, 0.4); }
+        /* Bottom Nav Bar */
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; height: 75px; background: #0f021f; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid rgba(255,255,255,0.05); }
+        .nav-item { display: flex; flex-direction: column; align-items: center; font-size: 10px; color: #777; cursor: pointer; }
+        .nav-item img { width: 22px; height: 22px; border-radius: 50%; border: 1px solid #444; }
+        .mic-main { width: 58px; height: 58px; background: linear-gradient(45deg, #8E24AA, var(--primary)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 26px; margin-top: -30px; border: 4px solid var(--bg); box-shadow: 0 5px 15px rgba(255, 45, 85, 0.4); }
 
-        /* অডিও রুম ইন্টারিয়র */
-        #room-screen { position: fixed; inset: 0; background: linear-gradient(180deg, #1e0836, #0b0118); z-index: 6000; display: none; flex-direction: column; }
-        .seat-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; padding: 40px 20px; }
+        /* Original Audio Room UI */
+        #room-ui { position: fixed; inset: 0; background: linear-gradient(180deg, #1e0836, #0b0118); z-index: 6000; display: none; flex-direction: column; }
+        .seat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; padding: 30px; flex: 1; }
         .seat { display: flex; flex-direction: column; align-items: center; gap: 8px; }
-        .seat-orb { width: 75px; height: 75px; border-radius: 50%; background: rgba(255,255,255,0.05); border: 2px dashed rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; position: relative; }
-        .seat-orb img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
-        .seat-orb.occupied { border: 2.5px solid var(--gold); border-style: solid; }
-        .speaking { border-color: var(--primary) !important; box-shadow: 0 0 15px var(--primary); animation: glow 1.5s infinite; }
-        @keyframes glow { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
-
-        .room-footer { margin-top: auto; height: 100px; display: flex; justify-content: center; align-items: center; background: rgba(0,0,0,0.2); }
-        .mic-btn { width: 65px; height: 65px; border-radius: 50%; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 28px; cursor: pointer; transition: 0.3s; }
-        .mic-on { background: var(--primary); box-shadow: 0 0 20px var(--primary); }
+        .seat-orb { width: 75px; height: 75px; border-radius: 50%; background: rgba(255,255,255,0.03); border: 2px dashed rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+        .seat-orb img { width: 100%; height: 100%; object-fit: cover; }
+        .seat-orb.active { border: 2.5px solid var(--gold); border-style: solid; }
+        .speaking { border-color: var(--primary) !important; box-shadow: 0 0 15px var(--primary); }
     </style>
 </head>
 <body>
 
 <div id="home-view">
-    <div class="header">
+    <div class="top-bar">
         <div class="tabs">
             <span class="tab active">Popular</span>
-            <span class="tab" onclick="openPanel('global-panel')">Global</span>
+            <span class="tab" onclick="toggleOverlay('global-overlay', true)">Global</span>
         </div>
         <div style="display:flex; gap:18px; font-size: 22px;">
-            <span onclick="openPanel('rank-panel')">🏆</span>
-            <span onclick="openPanel('search-panel')">🔍</span>
+            <span onclick="toggleOverlay('rank-overlay', true)">🏆</span>
+            <span onclick="toggleOverlay('search-overlay', true)">🔍</span>
         </div>
     </div>
-    <div class="feed" id="mainFeed"></div>
+    <div class="feed" id="roomGrid"></div>
 </div>
 
-<!-- Ranking Panel (Glass UI) -->
-<div id="rank-panel" class="overlay">
-    <div class="glass-top">
-        <div class="back-icon" onclick="closePanel('rank-panel')">
+<!-- Rank/Leaderboard Overlay -->
+<div id="rank-overlay" class="overlay">
+    <div class="glass-header">
+        <div class="back-arrow" onclick="toggleOverlay('rank-overlay', false)">
             <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
         </div>
         <span style="font-weight:800;">লিডারবোর্ড</span>
     </div>
-    <div style="padding: 20px; text-align: center; color: var(--gold);">শীঘ্রই নতুন র‍্যাঙ্কিং আসছে...</div>
+    <div style="padding: 20px; text-align: center;">Daily updates at 00:00 GMT</div>
 </div>
 
-<!-- Search Panel (Glass UI) -->
-<div id="search-panel" class="overlay">
-    <div class="glass-top">
-        <div class="back-icon" onclick="closePanel('search-panel')">
+<!-- Search Overlay -->
+<div id="search-overlay" class="overlay">
+    <div class="glass-header">
+        <div class="back-arrow" onclick="toggleOverlay('search-overlay', false)">
             <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
         </div>
-        <input type="text" placeholder="ইউজার আইডি বা রুম সার্চ করুন..." style="background:transparent; border:none; color:white; outline:none; width:100%; font-size: 16px;">
+        <input type="text" placeholder="আইডি বা রুমের নাম..." style="background:transparent; border:none; color:white; outline:none; width:100%; font-size: 16px;">
     </div>
 </div>
 
-<!-- Global Panel -->
-<div id="global-panel" class="overlay">
-    <div class="glass-top">
-        <div class="back-icon" onclick="closePanel('global-panel')">
+<!-- Global Region Overlay -->
+<div id="global-overlay" class="overlay">
+    <div class="glass-header">
+        <div class="back-arrow" onclick="toggleOverlay('global-overlay', false)">
             <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
         </div>
         <span style="font-weight:800;">গ্লোবাল রিজিয়ন</span>
     </div>
-    <div style="padding: 20px;">
-        <div style="background: var(--glass); padding: 15px; border-radius: 12px; margin-bottom: 10px;">🇧🇩 বাংলাদেশ</div>
-        <div style="background: var(--glass); padding: 15px; border-radius: 12px; margin-bottom: 10px;">🇮🇳 ইন্ডিয়া</div>
-    </div>
 </div>
 
-<!-- Audio Room Interior -->
-<div id="room-screen">
+<!-- Audio Room View -->
+<div id="room-ui">
     <div style="padding:15px; display:flex; justify-content:space-between; align-items:center; background:rgba(0,0,0,0.3);">
         <div style="display:flex; align-items:center; gap:10px;">
-            <div style="background:var(--primary); width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:900;">P</div>
+            <div style="background:var(--primary); width:42px; height:42px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:900;">P</div>
             <div>
-                <div id="activeRoomName" style="font-weight:700; font-size:14px;">Party Room</div>
-                <div id="pataIDDisplay" style="font-size:10px; color:var(--gold);">ID: Loading...</div>
+                <div id="roomTitle" style="font-weight:700; font-size:15px;">Party Room</div>
+                <div id="myPataID" style="font-size:10px; color:var(--gold);">ID: Loading...</div>
             </div>
         </div>
-        <div onclick="leaveRoom()" style="font-size:26px; padding: 5px;">✕</div>
+        <div onclick="exitRoom()" style="font-size:26px; padding:5px; cursor:pointer;">✕</div>
     </div>
-    <div class="seat-container">
+    <div class="seat-grid">
         <script>
             for(let i=1; i<=9; i++) {
                 document.write(`
                     <div class="seat" onclick="toggleSeat(${i})">
                         <div class="seat-orb" id="orb-${i}">👤</div>
-                        <div style="font-size:11px; color:#999;" id="name-${i}">খালি</div>
+                        <div style="font-size:11px; color:#666;" id="name-${i}">Empty</div>
                     </div>
                 `);
             }
         </script>
     </div>
-    <div class="room-footer">
-        <div id="mic-control" class="mic-btn" style="display:none;" onclick="handleMicToggle()">🎙️</div>
+    <div style="height:100px; display:flex; justify-content:center;">
+        <div id="mic-btn" style="width:65px; height:65px; background:rgba(255,255,255,0.1); border-radius:50%; display:none; align-items:center; justify-content:center; font-size:28px;" onclick="handleMic()">🎙️</div>
     </div>
 </div>
 
-<!-- Main Bottom Nav -->
-<div class="footer">
-    <div class="footer-item">🏠<span>হোম</span></div>
-    <div class="footer-item">🕒<span>হিস্ট্রি</span></div>
-    <div class="center-mic" onclick="joinRoom('Official Party')">🎙️</div>
-    <div class="footer-item">💬<span>মেসেজ</span></div>
-    <div class="footer-item">
-        <img src="https://i.pravatar.cc/100?u=me" style="width:24px; border-radius:50%; border: 1px solid white;">
-        <span>প্রোফাইল</span>
+<!-- Bottom Nav -->
+<div class="bottom-nav">
+    <div class="nav-item">🏠<span>Home</span></div>
+    <div class="nav-item">🕒<span>History</span></div>
+    <div class="mic-main" onclick="openRoom('Official Room')">🎙️</div>
+    <div class="nav-item">💬<span>Message</span></div>
+    <div class="nav-item">
+        <img src="https://i.pravatar.cc/100?u=pata" id="userAvatar">
+        <span>Me</span>
     </div>
 </div>
 
 <script>
-    // --- গুরুত্বপূর্ণ: এখানে আপনার অরিজিনাল ডাটা বসাবেন ---
-    const APP_ID = 1958175668; // আপনার Zego AppID
-    const APP_SIGN = '755b86b05e1eb51001015cbbaa994ba53bec16b9f29dc9eaa8583eda083bf59a'; // আপনার AppSign
+    // --- গুরুত্বপূর্ণ: এখানে আপনার তথ্য দিন ---
+    const ZEGO_ID = 1958175668; 
+    const ZEGO_SIGN = '755b86b05e1eb51001015cbbaa994ba53bec16b9f29dc9eaa8583eda083bf59a';
 
-    let zg = null, isMicOn = false, myCurrentSeat = null;
-    let currentUser = { name: "গেস্ট ইউজার", avatar: "https://i.pravatar.cc/100?u=pata", pataId: "000000" };
+    let zg = null, mySeat = null, micActive = false;
+    let userProfile = { name: "Guest User", avatar: "https://i.pravatar.cc/100?u=pata", pataId: "000000" };
 
-    // Firebase Initialization (Error safe)
+    // Firebase Auth & Setup
     try {
         const config = JSON.parse(__firebase_config);
         firebase.initializeApp(config);
-        const db = firebase.firestore();
         const auth = firebase.auth();
+        const db = firebase.firestore();
 
         auth.onAuthStateChanged(user => {
             if(user) {
-                currentUser.pataId = user.uid.slice(0,6).toUpperCase();
-                document.getElementById('pataIDDisplay').innerText = "ID: " + currentUser.pataId;
+                userProfile.pataId = user.uid.slice(0,6).toUpperCase();
+                document.getElementById('myPataID').innerText = "ID: " + userProfile.pataId;
+                document.getElementById('userAvatar').src = `https://i.pravatar.cc/100?u=${user.uid}`;
             } else { auth.signInAnonymously(); }
         });
-    } catch(e) { console.log("Offline mode active"); }
+    } catch(e) { console.log("Offline Mode"); }
 
     window.onload = () => {
-        const feed = document.getElementById('mainFeed');
+        const grid = document.getElementById('roomGrid');
         for(let i=1; i<=12; i++) {
-            feed.innerHTML += `
-                <div class="card" onclick="joinRoom('Pata Party ${i}')">
-                    <img src="https://picsum.photos/seed/${i+50}/400/500">
-                    <div class="card-info">
-                        <div style="font-weight:700; font-size:13px;">পার্টি রুম ${i}</div>
-                        <div style="font-size:10px; color:#ccc;">ID: 500${i} | অনলাইন</div>
+            grid.innerHTML += `
+                <div class="room-card" onclick="openRoom('Pata Room ${i}')">
+                    <img src="https://picsum.photos/seed/${i+80}/400/500">
+                    <div class="room-info">
+                        <div style="font-weight:700; font-size:14px;">Party ${i}</div>
+                        <div style="font-size:10px; color:#aaa;">ID: 200${i}</div>
                     </div>
                 </div>
             `;
         }
     };
 
-    async function joinRoom(name) {
-        document.getElementById('room-screen').style.display = 'flex';
-        document.getElementById('activeRoomName').innerText = name;
-        
-        if(window.ZegoExpressEngine) {
-            try {
-                if(!zg) zg = new ZegoExpressEngine(APP_ID, APP_SIGN);
-                await zg.loginRoom("room_"+name.replace(/\s/g,''), "u"+Math.random(), {userName: currentUser.name});
-            } catch(err) { console.error("Zego Login failed", err); }
+    async function openRoom(name) {
+        document.getElementById('room-ui').style.display = 'flex';
+        document.getElementById('roomTitle').innerText = name;
+        if(window.ZegoExpressEngine && !zg) {
+            zg = new ZegoExpressEngine(ZEGO_ID, ZEGO_SIGN);
         }
     }
 
-    function leaveRoom() {
-        if(myCurrentSeat) toggleSeat(myCurrentSeat);
-        document.getElementById('room-screen').style.display = 'none';
+    function exitRoom() {
+        if(mySeat) toggleSeat(mySeat);
+        document.getElementById('room-ui').style.display = 'none';
     }
 
     function toggleSeat(n) {
         const orb = document.getElementById('orb-'+n);
-        const label = document.getElementById('name-'+n);
-        
-        if(myCurrentSeat === n) {
-            orb.innerHTML = '👤'; orb.classList.remove('occupied'); label.innerText = 'খালি';
-            myCurrentSeat = null; document.getElementById('mic-control').style.display = 'none';
-        } else if(!myCurrentSeat) {
-            orb.innerHTML = `<img src="${currentUser.avatar}">`; orb.classList.add('occupied');
-            label.innerText = "আমি"; label.style.color = "white";
-            myCurrentSeat = n; document.getElementById('mic-control').style.display = 'flex';
+        const nameText = document.getElementById('name-'+n);
+        if(mySeat === n) {
+            orb.innerHTML = '👤'; orb.classList.remove('active'); nameText.innerText = 'Empty';
+            mySeat = null; document.getElementById('mic-btn').style.display = 'none';
+        } else if(!mySeat) {
+            orb.innerHTML = `<img src="${userProfile.avatar}">`; orb.classList.add('active');
+            nameText.innerText = "Me"; nameText.style.color = "white";
+            mySeat = n; document.getElementById('mic-btn').style.display = 'flex';
         }
     }
 
-    function handleMicToggle() {
-        isMicOn = !isMicOn;
-        const btn = document.getElementById('mic-control');
-        const orb = document.getElementById('orb-'+myCurrentSeat);
-        
-        if(isMicOn) {
-            btn.classList.add('mic-on'); orb.classList.add('speaking');
-        } else {
-            btn.classList.remove('mic-on'); orb.classList.remove('speaking');
-        }
+    function handleMic() {
+        micActive = !micActive;
+        const btn = document.getElementById('mic-btn');
+        const orb = document.getElementById('orb-'+mySeat);
+        btn.style.background = micActive ? 'var(--primary)' : 'rgba(255,255,255,0.1)';
+        micActive ? orb.classList.add('speaking') : orb.classList.remove('speaking');
     }
 
-    function openPanel(id) { document.getElementById(id).style.display = 'flex'; }
-    function closePanel(id) { document.getElementById(id).style.display = 'none'; }
+    function toggleOverlay(id, status) { document.getElementById(id).style.display = status ? 'flex' : 'none'; }
 </script>
 </body>
 </html>

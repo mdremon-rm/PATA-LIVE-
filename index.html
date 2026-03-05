@@ -55,6 +55,11 @@
         .podium-avatar { border-radius: 50%; border: 3px solid #555; width: 75px; height: 75px; object-fit: cover; }
         .rank-gold .podium-avatar { width: 95px; height: 95px; border-color: var(--gold); box-shadow: 0 0 20px rgba(255, 215, 0, 0.3); }
 
+        /* Global Menu Design */
+        .global-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 20px; }
+        .country-item { background: var(--card-bg); padding: 18px; border-radius: 16px; display: flex; align-items: center; gap: 12px; border: 1px solid rgba(255,255,255,0.05); cursor: pointer; }
+        .country-item:active { background: rgba(255,255,255,0.1); }
+
         /* Bottom Nav */
         .nav-bar { position: fixed; bottom: 0; width: 100%; height: 75px; background: rgba(15, 2, 31, 0.98); display: flex; align-items: center; justify-content: space-evenly; border-top: 1px solid rgba(255,255,255,0.05); z-index: 2000; }
         .nav-link { display: flex; flex-direction: column; align-items: center; font-size: 10px; color: var(--text-gray); }
@@ -79,7 +84,7 @@
                 <div class="tab-item" onclick="changeFeedTab(this)">Popular</div>
                 <div class="tab-item" onclick="changeFeedTab(this)">New</div>
                 <div class="tab-item" onclick="changeFeedTab(this)">Explore</div>
-                <div class="tab-item active" onclick="changeFeedTab(this)">Global</div>
+                <div class="tab-item active" onclick="toggleGlassOverlay('global-panel', true)">Global</div>
             </div>
         </div>
         <div class="header-actions">
@@ -126,6 +131,24 @@
                oninput="executeSearch()">
     </div>
     <div id="searchResults" style="padding:20px;"></div>
+</div>
+
+<!-- Global Region Panel (নতুন যুক্ত করা হয়েছে) -->
+<div id="global-panel" class="full-screen-overlay">
+    <div class="glass-top">
+        <span class="back-arrow" onclick="toggleGlassOverlay('global-panel', false)">←</span>
+        <span style="font-weight:700; font-size:18px;">Global Regions</span>
+    </div>
+    <div class="global-grid">
+        <div class="country-item" onclick="filterByRegion('Bangladesh')">🇧🇩 Bangladesh</div>
+        <div class="country-item" onclick="filterByRegion('India')">🇮🇳 India</div>
+        <div class="country-item" onclick="filterByRegion('Turkey')">🇹🇷 Turkey</div>
+        <div class="country-item" onclick="filterByRegion('USA')">🇺🇸 USA</div>
+        <div class="country-item" onclick="filterByRegion('Saudi Arabia')">🇸🇦 Saudi Arabia</div>
+        <div class="country-item" onclick="filterByRegion('Indonesia')">🇮🇩 Indonesia</div>
+        <div class="country-item" onclick="filterByRegion('Pakistan')">🇵🇰 Pakistan</div>
+        <div class="country-item" onclick="filterByRegion('Vietnam')">🇻🇳 Vietnam</div>
+    </div>
 </div>
 
 <!-- Audio Room Panel -->
@@ -231,6 +254,16 @@
     function changeFeedTab(el) {
         document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
         el.classList.add('active');
+        refreshFeed();
+    }
+
+    function filterByRegion(region) {
+        // রিজিয়ন সিলেক্ট করার পর গ্লোবাল প্যানেল বন্ধ হবে এবং ফিড রিফ্রেশ হবে
+        toggleGlassOverlay('global-panel', false);
+        document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+        // গ্লোবাল ট্যাবকে একটিভ রাখবে কারণ আমরা গ্লোবাল থেকেই রিজিয়ন চুজ করছি
+        const globalTab = document.querySelector('.tab-item:last-child');
+        if(globalTab) globalTab.classList.add('active');
         refreshFeed();
     }
 </script>

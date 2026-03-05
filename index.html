@@ -47,7 +47,11 @@
         @keyframes fadeIn { from { opacity: 0; transform: scale(1.05); } to { opacity: 1; transform: scale(1); } }
         
         .glass-top { height: 65px; display: flex; align-items: center; padding: 0 15px; background: var(--glass); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.1); }
-        .back-arrow { font-size: 28px; cursor: pointer; margin-right: 15px; display: flex; align-items: center; color: white; }
+        
+        /* প্রফেশনাল ব্যাক বাটন স্টাইল */
+        .back-arrow { cursor: pointer; margin-right: 15px; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; transition: background 0.2s; }
+        .back-arrow:active { background: rgba(255,255,255,0.1); }
+        .back-arrow svg { width: 24px; height: 24px; fill: none; stroke: white; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
 
         /* Ranking Design */
         .rank-top { display: flex; align-items: flex-end; justify-content: center; gap: 15px; padding: 40px 10px; background: linear-gradient(180deg, #300c50, var(--bg)); }
@@ -109,7 +113,9 @@
 <!-- Original Ranking Panel -->
 <div id="rank-panel" class="full-screen-overlay">
     <div class="glass-top">
-        <span class="back-arrow" onclick="toggleGlassOverlay('rank-panel', false)">←</span>
+        <div class="back-arrow" onclick="toggleGlassOverlay('rank-panel', false)">
+            <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        </div>
         <span style="font-weight:700; font-size:18px;">Daily Ranking</span>
     </div>
     <div style="flex:1; overflow-y:auto;">
@@ -125,7 +131,9 @@
 <!-- Original Search Panel -->
 <div id="search-panel" class="full-screen-overlay">
     <div class="glass-top">
-        <span class="back-arrow" onclick="toggleGlassOverlay('search-panel', false)">←</span>
+        <div class="back-arrow" onclick="toggleGlassOverlay('search-panel', false)">
+            <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        </div>
         <input type="text" id="queryInput" placeholder="Search by ID (e.g. 1001)" 
                style="flex:1; background:transparent; border:none; color:white; outline:none; font-size:16px;" 
                oninput="executeSearch()">
@@ -133,10 +141,12 @@
     <div id="searchResults" style="padding:20px;"></div>
 </div>
 
-<!-- Global Region Panel (নতুন যুক্ত করা হয়েছে) -->
+<!-- Global Region Panel -->
 <div id="global-panel" class="full-screen-overlay">
     <div class="glass-top">
-        <span class="back-arrow" onclick="toggleGlassOverlay('global-panel', false)">←</span>
+        <div class="back-arrow" onclick="toggleGlassOverlay('global-panel', false)">
+            <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        </div>
         <span style="font-weight:700; font-size:18px;">Global Regions</span>
     </div>
     <div class="global-grid">
@@ -258,10 +268,8 @@
     }
 
     function filterByRegion(region) {
-        // রিজিয়ন সিলেক্ট করার পর গ্লোবাল প্যানেল বন্ধ হবে এবং ফিড রিফ্রেশ হবে
         toggleGlassOverlay('global-panel', false);
         document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
-        // গ্লোবাল ট্যাবকে একটিভ রাখবে কারণ আমরা গ্লোবাল থেকেই রিজিয়ন চুজ করছি
         const globalTab = document.querySelector('.tab-item:last-child');
         if(globalTab) globalTab.classList.add('active');
         refreshFeed();

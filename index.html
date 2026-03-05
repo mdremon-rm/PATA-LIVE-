@@ -36,9 +36,13 @@
         .input-group { background: var(--card-bg); border-radius: 12px; display: flex; align-items: center; padding: 12px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); }
         .country-code { padding-right: 10px; border-right: 1px solid #444; margin-right: 10px; color: var(--gold); font-weight: 700; }
         .input-group input { background: transparent; border: none; color: white; flex: 1; outline: none; font-size: 16px; }
-        .btn-main { width: 100%; background: linear-gradient(45deg, var(--primary), var(--secondary)); border: none; padding: 15px; border-radius: 12px; color: white; font-weight: 700; margin-top: 10px; font-size: 16px; cursor: pointer; }
+        .btn-main { width: 100%; background: linear-gradient(45deg, var(--primary), var(--secondary)); border: none; padding: 15px; border-radius: 12px; color: white; font-weight: 700; margin-top: 10px; font-size: 16px; cursor: pointer; transition: 0.3s; }
+        .btn-main:active { transform: scale(0.96); opacity: 0.9; }
+        
+        /* Social Buttons */
         .social-login { margin-top: 30px; display: flex; gap: 20px; justify-content: center; }
-        .social-btn { width: 50px; height: 50px; border-radius: 50%; background: var(--card-bg); display: flex; align-items: center; justify-content: center; font-size: 20px; border: 1px solid rgba(255,255,255,0.1); cursor: pointer; }
+        .social-btn { width: 50px; height: 50px; border-radius: 50%; background: var(--card-bg); display: flex; align-items: center; justify-content: center; font-size: 20px; border: 1px solid rgba(255,255,255,0.1); cursor: pointer; transition: 0.3s; }
+        .social-btn:active { transform: scale(0.85); background: var(--glass); }
 
         /* Profile Setup UI */
         #profile-setup { position: fixed; inset: 0; background: var(--bg); z-index: 11000; display: none; flex-direction: column; align-items: center; padding: 40px 20px; }
@@ -59,14 +63,9 @@
         .room-card { aspect-ratio: 1/1.2; border-radius: 18px; overflow: hidden; position: relative; background: var(--card-bg); border: 1px solid rgba(255,255,255,0.06); }
         .room-card img { width: 100%; height: 100%; object-fit: cover; }
         .card-details { position: absolute; bottom: 0; width: 100%; padding: 10px; background: linear-gradient(to top, rgba(0,0,0,0.95), transparent); }
-        .live-tag { position: absolute; top: 10px; left: 10px; background: var(--primary); font-size: 9px; font-weight: 900; padding: 3px 8px; border-radius: 10px; z-index: 5; }
-
-        /* Overlays */
-        .full-screen-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 8000; display: none; flex-direction: column; animation: fadeIn 0.25s ease-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: scale(1.05); } to { opacity: 1; transform: scale(1); } }
-        .glass-top { height: 65px; display: flex; align-items: center; padding: 0 15px; background: var(--glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.1); }
-        .back-arrow { cursor: pointer; margin-right: 15px; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; }
-        .back-arrow svg { width: 24px; height: 24px; fill: none; stroke: white; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+        .live-tag { position: absolute; top: 10px; left: 10px; background: var(--primary); font-size: 9px; font-weight: 900; padding: 3px 8px; border-radius: 10px; z-index: 5; display: flex; align-items: center; gap: 4px; }
+        .live-dot { width: 6px; height: 6px; background: #fff; border-radius: 50%; animation: blink 1s infinite; }
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
 
         /* Bottom Nav */
         .nav-bar { position: fixed; bottom: 0; width: 100%; height: 75px; background: rgba(15, 2, 31, 0.98); display: flex; align-items: center; justify-content: space-evenly; border-top: 1px solid rgba(255,255,255,0.05); z-index: 2000; }
@@ -109,8 +108,8 @@
         
         <div style="margin-top: 25px; color: #666; font-size: 12px;">OR CONTINUE WITH</div>
         <div class="social-login">
-            <div class="social-btn">G</div>
-            <div class="social-btn" style="color:#1877F2">f</div>
+            <div class="social-btn" onclick="startSocialLogin('Google')">G</div>
+            <div class="social-btn" onclick="startSocialLogin('Facebook')" style="color:#1877F2">f</div>
         </div>
     </div>
 </div>
@@ -119,7 +118,7 @@
 <div id="profile-setup">
     <h2 style="margin-bottom:30px;">Profile Setup</h2>
     <div class="avatar-upload">
-        <img src="https://via.placeholder.com/150" id="preview-img">
+        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Lucky" id="preview-img">
         <input type="file" id="avatar-input" accept="image/*" onchange="previewAvatar(this)">
     </div>
     <div class="input-group" style="width:100%; max-width:320px;">
@@ -128,7 +127,7 @@
     <button class="btn-main" style="max-width:320px;" onclick="saveProfile()">Save & Start</button>
 </div>
 
-<!-- Main App UI -->
+<!-- Main App UI (Hidden initially) -->
 <div id="main-app-ui" style="display:none;">
     <div class="top-bar">
         <div class="tabs-wrapper">
@@ -154,7 +153,7 @@
         <div class="mic-btn" onclick="joinAudioRoom('Official Lounge', 'main_01')">🎙️</div>
         <div class="nav-link"><span>💬</span>Message</div>
         <div class="nav-link" id="profile-btn">
-            <img src="" id="my-thumb" style="width:24px; height:24px; border-radius:50%;">
+            <img src="" id="my-thumb" style="width:24px; height:24px; border-radius:50%; object-fit: cover; background: #333;">
             <span>Me</span>
         </div>
     </div>
@@ -187,7 +186,6 @@
     let zg = null, localStream = null, isMicOn = false, mySeat = null, currentRoomID = null;
     let currentUser = { uid: '', pataId: '', name: '', avatar: '' };
 
-    // Initialize
     window.onload = () => {
         initFirebase();
         renderSeats();
@@ -197,6 +195,15 @@
     function showMsg(t) {
         const b = document.getElementById('msg-box'); b.innerText = t; b.style.display = 'block';
         setTimeout(()=> b.style.display='none', 3000);
+    }
+
+    // Social Login Handler
+    function startSocialLogin(provider) {
+        showMsg(`${provider} Login initiated...`);
+        // Simulating Auth Delay
+        setTimeout(() => {
+            handleLogin(true); // Trigger login process
+        }, 1200);
     }
 
     function initFirebase() {
@@ -215,14 +222,18 @@
         } catch(e) { console.error("Firebase Config Error"); }
     }
 
-    async function handleLogin() {
-        const phone = document.getElementById('auth-phone').value;
-        const pass = document.getElementById('auth-pass').value;
-        if(phone.length < 10 || pass.length < 6) {
-            showMsg("Invalid Phone or Password (min 6 chars)"); return;
+    async function handleLogin(isSocial = false) {
+        if(!isSocial) {
+            const phone = document.getElementById('auth-phone').value;
+            const pass = document.getElementById('auth-pass').value;
+            if(phone.length < 10 || pass.length < 6) {
+                showMsg("Invalid Phone or Password (min 6 chars)"); return;
+            }
         }
-        // Anonymous Auth for Demo but logic prepared for Real Auth
-        await firebase.auth().signInAnonymously();
+        // Proceed with anonymous auth to allow immediate profile setup
+        try {
+            await firebase.auth().signInAnonymously();
+        } catch(e) { showMsg("Login failed. Try again."); }
     }
 
     async function loadUserData() {
@@ -234,7 +245,7 @@
             currentUser = doc.data();
             startApp();
         } else {
-            // New User: Assign Pata ID starting from 258001
+            // New User ID sequence logic
             const countRef = db.collection('artifacts').doc(__app_id).collection('metadata').doc('user_count');
             const countDoc = await countRef.get();
             let nextId = 258001;
@@ -253,7 +264,7 @@
             const reader = new FileReader();
             reader.onload = (e) => {
                 document.getElementById('preview-img').src = e.target.result;
-                currentUser.avatar = e.target.result; // Simple base64 for demo
+                currentUser.avatar = e.target.result;
             };
             reader.readAsDataURL(input.files[0]);
         }
@@ -263,6 +274,7 @@
         const name = document.getElementById('user-name-input').value;
         if(!name) { showMsg("Please enter your name"); return; }
         currentUser.name = name;
+        if(!currentUser.avatar) currentUser.avatar = document.getElementById('preview-img').src;
         
         const db = firebase.firestore();
         await db.collection('artifacts').doc(__app_id).collection('users').doc(currentUser.uid).set(currentUser);
@@ -277,7 +289,6 @@
         document.getElementById('myPataIDDisplay').innerText = `ID: ${currentUser.pataId}`;
     }
 
-    // --- Core Room Logic ---
     async function initZego() {
         if(zg) return;
         zg = new ZegoExpressEngine(ZEGO_APP_ID, ZEGO_SERVER_SECRET);
@@ -365,20 +376,17 @@
     function refreshFeed() {
         const grid = document.getElementById('audioGrid');
         grid.innerHTML = '';
-        const rooms = ["Official Lounge", "Pata Adda", "Music Night", "Global Talk"];
-        rooms.forEach((r, i) => {
-            grid.innerHTML += `
-                <div class="room-card" onclick="joinAudioRoom('${r}', 'room_${i}')">
-                    <img src="https://picsum.photos/seed/pata${i}/400/500">
-                    <div class="live-tag">LIVE</div>
-                    <div class="card-details">
-                        <div style="font-weight:700; font-size:13px;">${r}</div>
-                        <div style="font-size:10px; color:#aaa;">ID: 2580${i+1} | অনলাইন</div>
-                    </div>
-                </div>`;
-        });
-    }
-</script>
-</body>
-</html>
+        const rooms = [
+            { name: "Official Lounge", img: "https://picsum.photos/seed/pata1/400/500", tags: "Official • 24h" },
+            { name: "Pata Adda", img: "https://picsum.photos/seed/pata2/400/500", tags: "Fun • Friends" },
+            { name: "Music Night", img: "https://picsum.photos/seed/pata3/400/500", tags: "Singing • Live" },
+            { name: "Global Talk", img: "https://picsum.photos/seed/pata4/400/500", tags: "Global • Chat" }
+        ];
 
+        rooms.forEach((r, i) => {
+            const users = Math.floor(Math.random() * 200) + 20;
+            grid.innerHTML += `
+                <div class="room-card" onclick="joinAudioRoom('${r.name}', 'room_${i}')">
+                    <img src="${r.img}">
+                    <div class="live-tag"><div class="live-dot"></div>LIVE</div>
+                    <div style="position:absolute; top:10px; right:10px; background:rgba(0,0,0,0.5); padding:2px 6px; border-radius:10px; font-size:

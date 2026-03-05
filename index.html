@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pata Live - Original Master Voice</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Pata Live - Original Master Fixed</title>
     
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -27,182 +27,57 @@
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
-        body { 
-            font-family: 'Inter', sans-serif; 
-            background: var(--bg); 
-            color: white; 
-            overflow-x: hidden;
-            width: 100vw;
-            height: 100vh;
-        }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: white; overflow-x: hidden; width: 100vw; height: 100vh; }
 
-        /* Header Style */
-        .top-bar { 
-            height: 60px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: space-between; 
-            padding: 0 15px; 
-            background: var(--bg); 
-            position: sticky; 
-            top: 0; 
-            z-index: 1000; 
-        }
-        .tabs-wrapper { 
-            flex: 1; 
-            overflow-x: auto; 
-            white-space: nowrap; 
-            scrollbar-width: none; 
-        }
-        .tabs-wrapper::-webkit-scrollbar { display: none; }
+        /* --- Header & Tabs --- */
+        .top-bar { height: 65px; display: flex; align-items: center; justify-content: space-between; padding: 0 15px; background: var(--bg); position: sticky; top: 0; z-index: 1000; }
+        .tabs-wrapper { flex: 1; overflow-x: auto; white-space: nowrap; scrollbar-width: none; }
         .tabs { display: flex; gap: 20px; align-items: center; }
-        .tab-item { 
-            font-size: 14px; 
-            color: var(--text-gray); 
-            font-weight: 600; 
-            cursor: pointer; 
-            padding: 10px 0; 
-        }
-        .tab-item.active { 
-            color: white; 
-            font-size: 16px; 
-            border-bottom: 3px solid var(--primary); 
-        }
+        .tab-item { font-size: 14px; color: var(--text-gray); font-weight: 600; cursor: pointer; padding: 10px 0; position: relative; }
+        .tab-item.active { color: white; font-size: 16px; border-bottom: 3.5px solid var(--primary); }
+        .header-actions { display: flex; gap: 18px; font-size: 22px; margin-left: 15px; align-items: center; }
 
-        .header-actions { display: flex; gap: 18px; font-size: 20px; align-items: center; }
-
-        /* Feed Grid Fixed */
-        .main-content { 
-            padding: 10px; 
-            padding-bottom: 100px; 
-            display: grid; 
-            grid-template-columns: repeat(2, 1fr); 
-            gap: 10px; 
-            width: 100%;
-        }
-        .room-card { 
-            border-radius: 15px; 
-            overflow: hidden; 
-            position: relative; 
-            background: var(--card-bg); 
-            height: 200px;
-        }
+        /* --- Feed Grid --- */
+        .main-content { padding: 12px; padding-bottom: 100px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .room-card { aspect-ratio: 1/1.2; border-radius: 18px; overflow: hidden; position: relative; background: var(--card-bg); border: 1px solid rgba(255,255,255,0.06); }
         .room-card img { width: 100%; height: 100%; object-fit: cover; }
-        .card-details { 
-            position: absolute; 
-            bottom: 0; 
-            width: 100%; 
-            padding: 8px; 
-            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); 
-        }
-        .live-tag { 
-            position: absolute; 
-            top: 8px; 
-            left: 8px; 
-            background: var(--primary); 
-            font-size: 8px; 
-            font-weight: 900; 
-            padding: 2px 6px; 
-            border-radius: 10px; 
-        }
+        .card-details { position: absolute; bottom: 0; width: 100%; padding: 10px; background: linear-gradient(to top, rgba(0,0,0,0.95), transparent); }
+        .live-tag { position: absolute; top: 10px; left: 10px; background: var(--primary); font-size: 9px; font-weight: 900; padding: 3px 8px; border-radius: 10px; }
 
-        /* Overlays - Original Design */
-        .full-screen-overlay { 
-            position: fixed; 
-            inset: 0; 
-            background: var(--bg); 
-            z-index: 8000; 
-            display: none; 
-            flex-direction: column; 
-        }
-        .glass-top { 
-            height: 60px; 
-            display: flex; 
-            align-items: center; 
-            padding: 0 15px; 
-            background: var(--glass); 
-            backdrop-filter: blur(20px); 
-            border-bottom: 1px solid rgba(255,255,255,0.1); 
-        }
+        /* --- Overlays (Original Master Glass Design) --- */
+        .full-screen-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 8000; display: none; flex-direction: column; animation: slideIn 0.3s ease-out; }
+        @keyframes slideIn { from { transform: translateY(100%); } to { transform: translateY(0); } }
         
-        .back-arrow { 
-            cursor: pointer; 
-            margin-right: 12px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            width: 35px; 
-            height: 35px; 
-        }
-        .back-arrow svg { width: 22px; height: 22px; fill: none; stroke: white; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+        .glass-top { height: 65px; display: flex; align-items: center; padding: 0 15px; background: var(--glass); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.1); }
+        
+        /* আপনার অরিজিনাল অ্যারো আইকন */
+        .back-arrow { cursor: pointer; margin-right: 15px; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; }
+        .back-arrow svg { width: 24px; height: 24px; fill: none; stroke: white; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
 
-        /* Ranking */
-        .rank-top { 
-            display: flex; 
-            align-items: flex-end; 
-            justify-content: center; 
-            gap: 15px; 
-            padding: 30px 10px; 
-            background: linear-gradient(180deg, #2a0a45, var(--bg)); 
-        }
-        .user-podium { display: flex; flex-direction: column; align-items: center; gap: 5px; }
-        .podium-avatar { border-radius: 50%; border: 2px solid #444; width: 65px; height: 65px; object-fit: cover; }
-        .rank-gold .podium-avatar { width: 85px; height: 85px; border-color: var(--gold); }
+        /* --- Ranking Design --- */
+        .rank-scroll-box { flex: 1; overflow-y: auto; padding-bottom: 20px; }
+        .rank-top { display: flex; align-items: flex-end; justify-content: center; gap: 15px; padding: 40px 10px; background: linear-gradient(180deg, #300c50, var(--bg)); position: relative; }
+        .user-podium { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+        .podium-avatar { border-radius: 50%; border: 3px solid #555; width: 75px; height: 75px; object-fit: cover; }
+        .rank-gold .podium-avatar { width: 95px; height: 95px; border-color: var(--gold); box-shadow: 0 0 20px rgba(255, 215, 0, 0.3); }
+        .rank-item { display: flex; align-items: center; padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .rank-item img { width: 45px; height: 45px; border-radius: 50%; margin-right: 15px; border: 1px solid rgba(255,255,255,0.1); }
 
-        /* Bottom Nav Fixed */
-        .nav-bar { 
-            position: fixed; 
-            bottom: 0; 
-            width: 100%; 
-            height: 70px; 
-            background: rgba(15, 2, 31, 0.95); 
-            display: flex; 
-            align-items: center; 
-            justify-content: space-around; 
-            border-top: 1px solid rgba(255,255,255,0.05); 
-            z-index: 2000; 
-        }
+        /* --- Bottom Nav --- */
+        .nav-bar { position: fixed; bottom: 0; width: 100%; height: 75px; background: rgba(15, 2, 31, 0.98); display: flex; align-items: center; justify-content: space-evenly; border-top: 1px solid rgba(255,255,255,0.05); z-index: 2000; }
         .nav-link { display: flex; flex-direction: column; align-items: center; font-size: 10px; color: var(--text-gray); cursor: pointer; }
-        .nav-link img { width: 20px; height: 20px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.2); margin-bottom: 2px; }
-        .mic-btn { 
-            width: 55px; 
-            height: 55px; 
-            background: linear-gradient(45deg, var(--secondary), var(--primary)); 
-            border-radius: 50%; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            font-size: 24px; 
-            margin-top: -25px; 
-            border: 4px solid var(--bg); 
-            box-shadow: 0 5px 15px rgba(255, 45, 85, 0.3);
-        }
+        .nav-link img { width: 22px; height: 22px; border-radius: 50%; margin-bottom: 3px; border: 1px solid rgba(255,255,255,0.15); }
+        .mic-btn { width: 62px; height: 62px; background: linear-gradient(45deg, var(--secondary), var(--primary)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; position: relative; top: -18px; border: 4px solid var(--bg); box-shadow: 0 8px 25px rgba(255, 45, 85, 0.4); }
 
-        /* Room Interior Fixed */
+        /* --- Room View --- */
         #room-view { position: fixed; inset: 0; background: linear-gradient(180deg, #1e0836, #0b0118); z-index: 9000; display: none; flex-direction: column; }
-        .grid-seats { 
-            display: grid; 
-            grid-template-columns: repeat(3, 1fr); 
-            gap: 15px; 
-            padding: 30px 15px; 
-            justify-items: center;
-        }
-        .seat-unit { display: flex; flex-direction: column; align-items: center; gap: 5px; }
-        .seat-orb { 
-            width: 65px; 
-            height: 65px; 
-            border-radius: 50%; 
-            background: rgba(255,255,255,0.05); 
-            border: 1.5px dashed rgba(255,255,255,0.2); 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            overflow: hidden; 
-        }
+        .grid-seats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; padding: 40px 20px; }
+        .seat-unit { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+        .seat-orb { width: 75px; height: 75px; border-radius: 50%; background: rgba(255,255,255,0.05); border: 2px dashed rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; overflow: hidden; transition: 0.3s; }
         .seat-orb.active { border: 2px solid var(--gold); border-style: solid; }
         .seat-orb img { width: 100%; height: 100%; object-fit: cover; }
         .speaking { border-color: var(--primary) !important; animation: pulse 1s infinite; }
-        @keyframes pulse { 0% { box-shadow: 0 0 0 0px rgba(255, 45, 85, 0.4); } 100% { box-shadow: 0 0 0 10px rgba(255, 45, 85, 0); } }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0px rgba(255, 45, 85, 0.4); } 100% { box-shadow: 0 0 0 12px rgba(255, 45, 85, 0); } }
     </style>
 </head>
 <body>
@@ -215,118 +90,137 @@
                 <div class="tab-item active" onclick="changeFeedTab(this)">Popular</div>
                 <div class="tab-item" onclick="changeFeedTab(this)">New</div>
                 <div class="tab-item" onclick="changeFeedTab(this)">Explore</div>
-                <div class="tab-item" onclick="toggleGlassOverlay('global-panel', true)">Global</div>
+                <div class="tab-item" onclick="toggleOverlay('global-panel', true)">Global</div>
             </div>
         </div>
         <div class="header-actions">
-            <span onclick="toggleGlassOverlay('rank-panel', true)">🏆</span>
-            <span onclick="toggleGlassOverlay('search-panel', true)">🔍</span>
+            <span onclick="toggleOverlay('rank-panel', true)">🏆</span>
+            <span onclick="toggleOverlay('search-panel', true)">🔍</span>
         </div>
     </div>
 
     <div class="main-content" id="audioGrid"></div>
 
     <div class="nav-bar">
-        <div class="nav-link"><span>🏠</span>Home</div>
+        <div class="nav-link" onclick="location.reload()"><span>🏠</span>Home</div>
         <div class="nav-link"><span>🕒</span>History</div>
-        <div class="mic-btn" onclick="joinAudioRoom('Party Hub')">🎙️</div>
-        <div class="nav-link"><span>💬</span>Chat</div>
+        <div class="mic-btn" onclick="joinRoomUI('Main Party')">🎙️</div>
+        <div class="nav-link"><span>💬</span>Message</div>
         <div class="nav-link" onclick="handleProfileEdit()">
-            <img src="https://i.pravatar.cc/100?u=guest" id="nav-user-avatar">
-            <span id="nav-user-label">Me</span>
+            <img src="https://i.pravatar.cc/100?u=guest" id="nav-avatar">
+            <span id="nav-name">Me</span>
         </div>
     </div>
 </div>
 
-<!-- All Overlays with Original Design -->
+<!-- Ranking Panel -->
 <div id="rank-panel" class="full-screen-overlay">
     <div class="glass-top">
-        <div class="back-arrow" onclick="toggleGlassOverlay('rank-panel', false)"><svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></div>
+        <div class="back-arrow" onclick="toggleOverlay('rank-panel', false)">
+            <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        </div>
         <span style="font-weight:700;">Daily Ranking</span>
     </div>
-    <div id="extendedRankList" style="flex:1; overflow-y:auto;"></div>
+    <div class="rank-scroll-box">
+        <div class="rank-top">
+            <div class="user-podium"><img src="https://i.pravatar.cc/100?u=rank2" class="podium-avatar"><span>User_2</span></div>
+            <div class="user-podium rank-gold"><img src="https://i.pravatar.cc/100?u=rank1" class="podium-avatar"><span>TOP_1</span></div>
+            <div class="user-podium"><img src="https://i.pravatar.cc/100?u=rank3" class="podium-avatar"><span>User_3</span></div>
+        </div>
+        <div id="rankList"></div>
+    </div>
 </div>
 
+<!-- Search Panel -->
 <div id="search-panel" class="full-screen-overlay">
     <div class="glass-top">
-        <div class="back-arrow" onclick="toggleGlassOverlay('search-panel', false)"><svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></div>
-        <input type="text" id="queryInput" placeholder="Search ID" style="flex:1; background:transparent; border:none; color:white; outline:none; font-size:16px;" oninput="executeSearch()">
+        <div class="back-arrow" onclick="toggleOverlay('search-panel', false)">
+            <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        </div>
+        <input type="text" id="searchInput" placeholder="Search by ID" style="flex:1; background:transparent; border:none; color:white; outline:none; font-size:16px;">
     </div>
     <div id="searchResults" style="padding:20px;"></div>
 </div>
 
+<!-- Global Panel -->
 <div id="global-panel" class="full-screen-overlay">
     <div class="glass-top">
-        <div class="back-arrow" onclick="toggleGlassOverlay('global-panel', false)"><svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></div>
-        <span style="font-weight:700;">Global Regions</span>
+        <div class="back-arrow" onclick="toggleOverlay('global-panel', false)">
+            <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        </div>
+        <span style="font-weight:700;">Select Region</span>
     </div>
-    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:15px;">
-        <div style="background:var(--card-bg); padding:15px; border-radius:10px; text-align:center;">🇧🇩 BD</div>
-        <div style="background:var(--card-bg); padding:15px; border-radius:10px; text-align:center;">🇮🇳 India</div>
+    <div style="padding:20px; display:grid; grid-template-columns:1fr 1fr; gap:15px;">
+        <div style="background:var(--card-bg); padding:20px; border-radius:15px; text-align:center;">🇧🇩 Bangladesh</div>
+        <div style="background:var(--card-bg); padding:20px; border-radius:15px; text-align:center;">🇮🇳 India</div>
     </div>
 </div>
 
-<!-- Audio Room View -->
+<!-- Room Interior -->
 <div id="room-view">
-    <div style="padding:15px; display:flex; justify-content:space-between; align-items:center; background:rgba(0,0,0,0.3);">
-        <div style="display:flex; align-items:center; gap:10px;">
-            <div style="background:var(--primary); width:35px; height:35px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:12px;">P</div>
+    <div style="padding:20px; display:flex; justify-content:space-between; align-items:center; background:rgba(0,0,0,0.3);">
+        <div style="display:flex; align-items:center; gap:12px;">
+            <div style="background:var(--primary); width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:900;">P</div>
             <div>
-                <div id="currentRoomName" style="font-weight:700; font-size:14px;">Room</div>
-                <div style="font-size:10px; color:var(--gold);" id="room-pata-id">ID: 000000</div>
+                <div id="roomNameDisplay" style="font-weight:800; font-size:15px;">Party Room</div>
+                <div style="font-size:10px; color:var(--gold);" id="pata-id-display">ID: 000000</div>
             </div>
         </div>
-        <div onclick="leaveRoom()" style="font-size:22px; padding:5px;">✕</div>
+        <div onclick="leaveRoom()" style="font-size:24px; padding:5px;">✕</div>
     </div>
     <div class="grid-seats">
         <script>
             for(let i=1; i<=9; i++) {
                 document.write(`
-                    <div class="seat-unit" onclick="toggleSeat(${i})">
+                    <div class="seat-unit" onclick="handleSeatAction(${i})">
                         <div class="seat-orb" id="orb-${i}">👤</div>
-                        <div style="font-size:10px; color:#666;" id="user-${i}">Empty</div>
+                        <div style="font-size:11px; color:#666;" id="seat-user-${i}">Empty</div>
                     </div>
                 `);
             }
         </script>
     </div>
-    <div style="margin-top:auto; padding-bottom:40px; display:flex; justify-content:center;">
-        <div id="mic-toggle" style="width:55px; height:55px; background:rgba(255,255,255,0.1); border-radius:50%; display:none; align-items:center; justify-content:center; font-size:20px;" onclick="toggleMic()">🎙️</div>
+    <div style="margin-top:auto; padding-bottom:50px; display:flex; justify-content:center;">
+        <div id="mic-control" style="width:65px; height:65px; background:rgba(255,255,255,0.1); border-radius:50%; display:none; align-items:center; justify-content:center; font-size:26px;" onclick="toggleMic()">🎙️</div>
     </div>
 </div>
 
 <script>
-    /* FINAL MASTER AUTH PROFESSIONAL CONFIG
-       (DO NOT ALTER DATES OR IDS)
+    /* ZEGOCLOUD & FIREBASE CONFIG
+       DO NOT REMOVE OR CHANGE THESE VALUES
     */
-    const ZEGO_ID = 1958175668;
-    const ZEGO_SIGN = '755b86b05e1eb51001015cbbaa994ba53bec16b9f29dc9eaa8583eda083bf59a';
+    const Z_ID = 1958175668;
+    const Z_SIGN = '755b86b05e1eb51001015cbbaa994ba53bec16b9f29dc9eaa8583eda083bf59a';
     
-    const firebaseConfig = JSON.parse(__firebase_config);
-    firebase.initializeApp(firebaseConfig);
+    const fbCfg = JSON.parse(__firebase_config);
+    firebase.initializeApp(fbCfg);
     const auth = firebase.auth();
     const db = firebase.firestore();
     const appId = typeof __app_id !== 'undefined' ? __app_id : 'pata-live-master';
 
-    let zego = null, activeUser = null, micOn = false, curRoom = null, seatIdx = null;
+    let zEngine = null, userData = null, isMicActive = false, roomID = null, activeSeat = null;
 
-    window.onload = () => { refreshFeed(); initUser(); };
+    window.onload = () => {
+        renderFeed();
+        startAuth();
+    };
 
-    async function initUser() {
-        auth.onAuthStateChanged(async (user) => {
-            if (user) {
-                const doc = db.collection('artifacts').doc(appId).collection('users').doc(user.uid).collection('profile').doc('info');
-                doc.onSnapshot((s) => {
+    /* Auth Logic */
+    async function startAuth() {
+        auth.onAuthStateChanged(async (u) => {
+            if (u) {
+                const ref = db.collection('artifacts').doc(appId).collection('users').doc(u.uid).collection('profile').doc('info');
+                ref.onSnapshot((s) => {
                     if (s.exists) {
-                        activeUser = s.data(); activeUser.uid = user.uid;
-                        document.getElementById('nav-user-avatar').src = activeUser.avatar;
-                        document.getElementById('nav-user-label').innerText = activeUser.name;
-                        document.getElementById('room-pata-id').innerText = "ID: " + activeUser.pataId;
+                        userData = s.data(); userData.uid = u.uid;
+                        document.getElementById('nav-avatar').src = userData.avatar;
+                        document.getElementById('nav-name').innerText = userData.name;
+                        document.getElementById('pata-id-display').innerText = "ID: " + userData.pataId;
                     } else {
-                        doc.set({
-                            name: "Guest_" + user.uid.slice(0,4),
+                        ref.set({
+                            name: "Guest_" + u.uid.slice(0,4),
                             pataId: Math.floor(100000 + Math.random() * 900000).toString(),
-                            avatar: `https://i.pravatar.cc/100?u=${user.uid}`,
+                            avatar: `https://i.pravatar.cc/100?u=${u.uid}`,
                             level: 1
                         });
                     }
@@ -335,92 +229,100 @@
         });
     }
 
-    async function handleProfileEdit() {
-        const n = prompt("নাম পরিবর্তন করুন:", activeUser.name);
-        if(n) await db.collection('artifacts').doc(appId).collection('users').doc(activeUser.uid).collection('profile').doc('info').update({name: n});
-    }
-
     /* Voice Logic */
-    async function joinAudioRoom(name) {
+    async function joinRoomUI(name) {
         document.getElementById('room-view').style.display = 'flex';
-        document.getElementById('currentRoomName').innerText = name;
-        curRoom = "room_" + name.replace(/\s/g, '');
-        if(!zego) zego = new ZegoExpressEngine(ZEGO_ID, ZEGO_SIGN);
+        document.getElementById('roomNameDisplay').innerText = name;
+        roomID = "room_" + name.replace(/\s/g, '');
+        if(!zEngine) zEngine = new ZegoExpressEngine(Z_ID, Z_SIGN);
         
-        zego.on('roomStreamUpdate', async (id, type, streams) => {
-            if (type === 'ADD') { for (const s of streams) await zego.startPlayingStream(s.streamID); }
+        zEngine.on('roomStreamUpdate', async (id, type, streams) => {
+            if (type === 'ADD') { for (const s of streams) await zEngine.startPlayingStream(s.streamID); }
         });
 
-        try { await zego.loginRoom(curRoom, activeUser.uid, { userName: activeUser.name }); } catch(e) {}
+        try { await zEngine.loginRoom(roomID, userData.uid, { userName: userData.name }); } catch(e) {}
     }
 
     async function leaveRoom() {
-        if(micOn) await toggleMic();
-        if(seatIdx) toggleSeat(seatIdx);
-        await zego.logoutRoom(curRoom);
+        if(isMicActive) await toggleMic();
+        if(activeSeat) handleSeatAction(activeSeat);
+        await zEngine.logoutRoom(roomID);
         document.getElementById('room-view').style.display = 'none';
-        curRoom = null;
+        roomID = null;
     }
 
-    function toggleSeat(i) {
-        const orb = document.getElementById(`orb-${i}`), name = document.getElementById(`user-${i}`);
-        if (seatIdx === i) {
+    function handleSeatAction(i) {
+        const orb = document.getElementById(`orb-${i}`), name = document.getElementById(`seat-user-${i}`);
+        if (activeSeat === i) {
             orb.innerHTML = '👤'; orb.classList.remove('active'); name.innerText = 'Empty';
-            name.style.color = '#666'; seatIdx = null;
-            document.getElementById('mic-toggle').style.display = 'none';
-            if(micOn) toggleMic();
-        } else if (!seatIdx) {
-            orb.innerHTML = `<img src="${activeUser.avatar}">`;
-            orb.classList.add('active'); name.innerText = activeUser.name;
-            name.style.color = 'white'; seatIdx = i;
-            document.getElementById('mic-toggle').style.display = 'flex';
+            name.style.color = '#666'; activeSeat = null;
+            document.getElementById('mic-control').style.display = 'none';
+            if(isMicActive) toggleMic();
+        } else if (!activeSeat) {
+            orb.innerHTML = `<img src="${userData.avatar}">`;
+            orb.classList.add('active'); name.innerText = userData.name;
+            name.style.color = 'white'; activeSeat = i;
+            document.getElementById('mic-control').style.display = 'flex';
         }
     }
 
     async function toggleMic() {
-        if (!zego || !seatIdx) return;
-        const btn = document.getElementById('mic-toggle'), orb = document.getElementById(`orb-${seatIdx}`);
-        if (!micOn) {
-            const sid = `stream_${activeUser.uid}`;
-            const s = await zego.createStream({ camera: { audio: true, video: false } });
-            zego.startPublishingStream(sid, s);
+        if (!zEngine || !activeSeat) return;
+        const btn = document.getElementById('mic-control'), orb = document.getElementById(`orb-${activeSeat}`);
+        if (!isMicActive) {
+            const sid = `stream_${userData.uid}`;
+            const s = await zEngine.createStream({ camera: { audio: true, video: false } });
+            zEngine.startPublishingStream(sid, s);
             btn.style.background = 'var(--primary)'; orb.classList.add('speaking');
-            micOn = true;
+            isMicActive = true;
         } else {
-            zego.stopPublishingStream(`stream_${activeUser.uid}`);
+            zEngine.stopPublishingStream(`stream_${userData.uid}`);
             btn.style.background = 'rgba(255,255,255,0.1)'; orb.classList.remove('speaking');
-            micOn = false;
+            isMicActive = false;
         }
     }
 
-    /* UI Fixes */
-    function refreshFeed() {
+    /* UI Functions */
+    function renderFeed() {
         const g = document.getElementById('audioGrid'); g.innerHTML = '';
         for(let i=1; i<=16; i++) {
             g.innerHTML += `
-                <div class="room-card" onclick="joinAudioRoom('Premium Room ${i}')">
-                    <img src="https://picsum.photos/seed/${i+100}/300/400">
+                <div class="room-card" onclick="joinRoomUI('Premium Room ${i}')">
+                    <img src="https://picsum.photos/seed/pata${i}/400/500">
                     <div class="live-tag">LIVE</div>
                     <div class="card-details">
-                        <div style="font-weight:700; font-size:12px;">Pata Room ${i}</div>
-                        <div style="font-size:9px; color:#ccc;">ID: 200${i} | 152 Online</div>
+                        <div style="font-weight:700; font-size:13px;">Pata Room ${i}</div>
+                        <div style="font-size:10px; color:#aaa;">ID: 500${i} | 1.5K Online</div>
                     </div>
                 </div>`;
         }
     }
 
-    function toggleGlassOverlay(id, s) { 
-        document.getElementById(id).style.display = s ? 'flex' : 'none'; 
-        if(id === 'rank-panel' && s) {
-            let l = document.getElementById('extendedRankList'), h = '';
-            for(let i=1; i<=10; i++) h += `<div style="display:flex; align-items:center; padding:15px; border-bottom:1px solid #1a1a2e;"><span style="width:25px;">${i}</span><img src="https://i.pravatar.cc/100?u=r${i}" style="width:35px; border-radius:50%; margin-right:10px;"><span>User_${i}</span></div>`;
-            l.innerHTML = h;
+    function toggleOverlay(id, show) {
+        const el = document.getElementById(id);
+        el.style.display = show ? 'flex' : 'none';
+        if(id === 'rank-panel' && show) {
+            const l = document.getElementById('rankList'); l.innerHTML = '';
+            for(let i=4; i<=15; i++) {
+                l.innerHTML += `<div class="rank-item">
+                    <span style="width:30px; font-weight:900; color:var(--text-gray);">${i}</span>
+                    <img src="https://i.pravatar.cc/100?u=r${i}">
+                    <div style="flex:1;">User_ID_${i}00</div>
+                    <div style="color:var(--gold); font-size:12px;">★ ${20-i}K</div>
+                </div>`;
+            }
         }
+    }
+
+    async function handleProfileEdit() {
+        const n = prompt("Enter New Name:", userData.name);
+        if(n) await db.collection('artifacts').doc(appId).collection('users').doc(userData.uid).collection('profile').doc('info').update({name: n});
     }
 
     function changeFeedTab(el) {
         document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
-        el.classList.add('active'); refreshFeed();
+        el.classList.add('active');
+        renderFeed();
     }
 </script>
 </body>

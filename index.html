@@ -213,6 +213,25 @@
 </div>
 
 <script>
+    // --- Firebase Configuration ---
+    const firebaseConfig = {
+        apiKey: "AIzaSyD5vRGyz3qdyqhnt2T9qxLPV",
+        authDomain: "pata-live.firebaseapp.com",
+        databaseURL: "https://pata-live-default-rtdb.firebaseio.com",
+        projectId: "pata-live",
+        storageBucket: "pata-live.firebasestorage.app",
+        messagingSenderId: "644016212127",
+        appId: "1:644016212127:web:214bc06f4677c8188e7aaa",
+        measurementId: "G-ZFKKMQH8XM"
+    };
+
+    // Initialize Firebase
+    if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+    }
+    const auth = firebase.auth();
+    const database = firebase.database();
+
     // --- New Auth Logic ---
     function toggleAuth(isLogin) {
         document.getElementById('login-form').style.display = isLogin ? 'block' : 'none';
@@ -225,8 +244,20 @@
         const pass = document.getElementById('reg-pass').value;
 
         if(name && email && pass) {
-            alert("Account Created Successfully for " + name);
-            enterApp();
+            auth.createUserWithEmailAndPassword(email, pass)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+                    database.ref('users/' + user.uid).set({
+                        username: name,
+                        email: email,
+                        xp: 0
+                    });
+                    alert("Account Created Successfully!");
+                    enterApp();
+                })
+                .catch((error) => {
+                    alert(error.message);
+                });
         } else {
             alert("Please fill all fields");
         }
@@ -237,7 +268,13 @@
         const pass = document.getElementById('login-pass').value;
 
         if(email && pass) {
-            enterApp();
+            auth.signInWithEmailAndPassword(email, pass)
+                .then(() => {
+                    enterApp();
+                })
+                .catch((error) => {
+                    alert(error.message);
+                });
         } else {
             alert("Enter email and password");
         }
@@ -250,13 +287,22 @@
     }
 
     function logout() {
-        document.getElementById('auth-screen').style.display = 'flex';
-        document.getElementById('main-app-ui').style.display = 'none';
+        auth.signOut().then(() => {
+            document.getElementById('auth-screen').style.display = 'flex';
+            document.getElementById('main-app-ui').style.display = 'none';
+        });
     }
 
     // --- App Logic (Original) ---
     window.onload = () => {
-        // Initial state is Auth Screen
+        // Auth state persistence
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                enterApp();
+            } else {
+                logout();
+            }
+        });
     };
 
     function refreshFeed() {
@@ -329,17 +375,4 @@
 
     function changeFeedTab(el) {
         document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
-        el.classList.add('active');
-        refreshFeed();
-    }
-
-    function filterByRegion(region) {
-        toggleGlassOverlay('global-panel', false);
-        document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
-        const globalTab = document.querySelector('.tab-item:last-child');
-        if(globalTab) globalTab.classList.add('active');
-        refreshFeed();
-    }
-</script>
-</body>
-</html>
+        e

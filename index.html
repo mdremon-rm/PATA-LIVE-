@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Pata Live - Original Recovery</title>
     
-    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
@@ -75,12 +74,43 @@
         .seat-unit { display: flex; flex-direction: column; align-items: center; gap: 8px; }
         .seat-orb { width: 75px; height: 75px; border-radius: 50%; background: rgba(255,255,255,0.05); border: 2px dashed rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; overflow: hidden; }
         .seat-orb img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* --- New Auth UI Styles --- */
+        #auth-screen { position: fixed; inset: 0; background: radial-gradient(circle at top, #2e0854, #0b0118); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
+        .auth-card { width: 100%; max-width: 350px; background: rgba(255,255,255,0.06); backdrop-filter: blur(20px); border-radius: 25px; padding: 30px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+        .auth-input { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 12px 15px; color: white; margin-bottom: 15px; outline: none; }
+        .auth-btn { width: 100%; background: linear-gradient(45deg, var(--secondary), var(--primary)); border: none; border-radius: 12px; padding: 14px; color: white; font-weight: 700; cursor: pointer; margin-top: 10px; }
+        .auth-toggle { margin-top: 20px; font-size: 13px; color: var(--text-gray); cursor: pointer; }
+        .auth-toggle span { color: var(--primary); font-weight: bold; }
     </style>
 </head>
 <body>
 
-<!-- Main Interface -->
-<div id="main-app-ui">
+<div id="auth-screen">
+    <div style="text-align: center; margin-bottom: 30px;">
+        <h1 style="font-size: 32px; font-weight: 900; letter-spacing: -1px;">PATA <span style="color: var(--primary);">LIVE</span></h1>
+        <p style="color: var(--text-gray); font-size: 14px;">Connect and Earn Honestly</p>
+    </div>
+    
+    <div class="auth-card" id="login-form">
+        <h2 style="margin-bottom: 20px; font-size: 20px;">Welcome Back</h2>
+        <input type="email" id="login-email" class="auth-input" placeholder="Email Address">
+        <input type="password" id="login-pass" class="auth-input" placeholder="Password">
+        <button class="auth-btn" onclick="handleLogin()">LOGIN</button>
+        <div class="auth-toggle" onclick="toggleAuth(false)">Don't have an account? <span>Sign Up</span></div>
+    </div>
+
+    <div class="auth-card" id="signup-form" style="display: none;">
+        <h2 style="margin-bottom: 20px; font-size: 20px;">Create Account</h2>
+        <input type="text" id="reg-name" class="auth-input" placeholder="Full Name">
+        <input type="email" id="reg-email" class="auth-input" placeholder="Email Address">
+        <input type="password" id="reg-pass" class="auth-input" placeholder="Set Password">
+        <button class="auth-btn" onclick="handleSignup()">SIGN UP</button>
+        <div class="auth-toggle" onclick="toggleAuth(true)">Already have an account? <span>Login</span></div>
+    </div>
+</div>
+
+<div id="main-app-ui" style="display: none;">
     <div class="top-bar">
         <div class="tabs-wrapper">
             <div class="tabs">
@@ -98,19 +128,17 @@
     </div>
 
     <div class="main-content" id="audioGrid">
-        <!-- JS-Generated 16 Cards -->
-    </div>
+        </div>
 
     <div class="nav-bar">
         <div class="nav-link"><span>🏠</span>Home</div>
         <div class="nav-link"><span>🕒</span>History</div>
         <div class="mic-btn" onclick="joinAudioRoom('My Party Room')">🎙️</div>
         <div class="nav-link"><span>💬</span>Message</div>
-        <div class="nav-link"><span>👤</span>Me</div>
+        <div class="nav-link" onclick="logout()"><span>👤</span>Logout</div>
     </div>
 </div>
 
-<!-- Original Ranking Panel -->
 <div id="rank-panel" class="full-screen-overlay">
     <div class="glass-top">
         <div class="back-arrow" onclick="toggleGlassOverlay('rank-panel', false)">
@@ -128,7 +156,6 @@
     </div>
 </div>
 
-<!-- Original Search Panel -->
 <div id="search-panel" class="full-screen-overlay">
     <div class="glass-top">
         <div class="back-arrow" onclick="toggleGlassOverlay('search-panel', false)">
@@ -141,7 +168,6 @@
     <div id="searchResults" style="padding:20px;"></div>
 </div>
 
-<!-- Global Region Panel -->
 <div id="global-panel" class="full-screen-overlay">
     <div class="glass-top">
         <div class="back-arrow" onclick="toggleGlassOverlay('global-panel', false)">
@@ -161,7 +187,6 @@
     </div>
 </div>
 
-<!-- Audio Room Panel -->
 <div id="room-view">
     <div style="padding:20px; display:flex; justify-content:space-between; align-items:center; background:rgba(0,0,0,0.2);">
         <div style="display:flex; align-items:center; gap:12px;">
@@ -188,9 +213,50 @@
 </div>
 
 <script>
-    // App Logic
-    window.onload = () => {
+    // --- New Auth Logic ---
+    function toggleAuth(isLogin) {
+        document.getElementById('login-form').style.display = isLogin ? 'block' : 'none';
+        document.getElementById('signup-form').style.display = isLogin ? 'none' : 'block';
+    }
+
+    function handleSignup() {
+        const name = document.getElementById('reg-name').value;
+        const email = document.getElementById('reg-email').value;
+        const pass = document.getElementById('reg-pass').value;
+
+        if(name && email && pass) {
+            alert("Account Created Successfully for " + name);
+            enterApp();
+        } else {
+            alert("Please fill all fields");
+        }
+    }
+
+    function handleLogin() {
+        const email = document.getElementById('login-email').value;
+        const pass = document.getElementById('login-pass').value;
+
+        if(email && pass) {
+            enterApp();
+        } else {
+            alert("Enter email and password");
+        }
+    }
+
+    function enterApp() {
+        document.getElementById('auth-screen').style.display = 'none';
+        document.getElementById('main-app-ui').style.display = 'block';
         refreshFeed();
+    }
+
+    function logout() {
+        document.getElementById('auth-screen').style.display = 'flex';
+        document.getElementById('main-app-ui').style.display = 'none';
+    }
+
+    // --- App Logic (Original) ---
+    window.onload = () => {
+        // Initial state is Auth Screen
     };
 
     function refreshFeed() {

@@ -2,169 +2,278 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Audio Earning Platform - UI Pro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Pata Live - Original Recovery</title>
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    
     <style>
-        /* মূল ব্যাকগ্রাউন্ড এবং টাইপোগ্রাফি */
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Poppins', sans-serif;
-            background: radial-gradient(circle at top left, #1e293b, #0f172a);
-            color: #ffffff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            overflow-x: hidden;
+        :root {
+            --primary: #FF2D55;
+            --secondary: #8E24AA;
+            --bg: #0b0118;
+            --card-bg: #1e1e30;
+            --text-gray: #b0b0b0;
+            --gold: #FFD700;
+            --glass: rgba(255, 255, 255, 0.08);
         }
 
-        /* গ্লাস-মর্ফিজম কন্টেইনার */
-        .glass-container {
-            width: 90%;
-            max-width: 400px;
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border-radius: 24px;
-            border: 1px solid rgba(255, 255, 255, 0.1); /* Border Glow Effect */
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-            padding: 20px;
-            position: relative;
-        }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: white; overflow-x: hidden; }
 
-        /* প্রফেশনাল ব্যাক বাটন ও হেডার */
-        .header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 25px;
-        }
+        /* Header Style */
+        .top-bar { height: 65px; display: flex; align-items: center; justify-content: space-between; padding: 0 15px; background: var(--bg); position: sticky; top: 0; z-index: 1000; }
+        .tabs-wrapper { flex: 1; overflow-x: auto; white-space: nowrap; scrollbar-width: none; }
+        .tabs { display: flex; gap: 20px; align-items: center; }
+        .tab-item { font-size: 14px; color: var(--text-gray); font-weight: 600; cursor: pointer; padding: 10px 0; position: relative; }
+        .tab-item.active { color: white; font-size: 16px; border-bottom: 3.5px solid var(--primary); }
 
-        .back-button {
-            background: rgba(255, 255, 255, 0.1);
-            border: none;
-            border-radius: 12px;
-            padding: 10px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: 0.3s ease;
-            margin-right: 15px;
-        }
+        .header-actions { display: flex; gap: 18px; font-size: 22px; margin-left: 15px; align-items: center; }
 
-        .back-button:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: translateX(-3px);
-        }
+        /* Feed Grid */
+        .main-content { padding: 12px; padding-bottom: 100px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .room-card { aspect-ratio: 1/1.2; border-radius: 18px; overflow: hidden; position: relative; background: var(--card-bg); border: 1px solid rgba(255,255,255,0.06); }
+        .room-card img { width: 100%; height: 100%; object-fit: cover; }
+        .card-details { position: absolute; bottom: 0; width: 100%; padding: 10px; background: linear-gradient(to top, rgba(0,0,0,0.95), transparent); }
+        .live-tag { position: absolute; top: 10px; left: 10px; background: var(--primary); font-size: 9px; font-weight: 900; padding: 3px 8px; border-radius: 10px; }
 
-        .back-button svg {
-            width: 20px;
-            height: 20px;
-            fill: #fff;
-        }
+        /* Original Professional Overlays (Glass UI) */
+        .full-screen-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 8000; display: none; flex-direction: column; animation: fadeIn 0.25s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(1.05); } to { opacity: 1; transform: scale(1); } }
+        
+        .glass-top { height: 65px; display: flex; align-items: center; padding: 0 15px; background: var(--glass); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.1); }
+        
+        /* প্রফেশনাল ব্যাক বাটন স্টাইল */
+        .back-arrow { cursor: pointer; margin-right: 15px; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; transition: background 0.2s; }
+        .back-arrow:active { background: rgba(255,255,255,0.1); }
+        .back-arrow svg { width: 24px; height: 24px; fill: none; stroke: white; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
 
-        /* র‍্যাঙ্কিং বোর্ড ডিজাইন */
-        .ranking-card {
-            background: rgba(255, 255, 255, 0.08);
-            border-radius: 16px;
-            padding: 15px;
-            margin: 10px 0;
-            display: flex;
-            align-items: center;
-            transition: transform 0.3s ease;
-            border: 0.5px solid rgba(255, 255, 255, 0.05);
-        }
+        /* Ranking Design */
+        .rank-top { display: flex; align-items: flex-end; justify-content: center; gap: 15px; padding: 40px 10px; background: linear-gradient(180deg, #300c50, var(--bg)); }
+        .user-podium { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+        .podium-avatar { border-radius: 50%; border: 3px solid #555; width: 75px; height: 75px; object-fit: cover; }
+        .rank-gold .podium-avatar { width: 95px; height: 95px; border-color: var(--gold); box-shadow: 0 0 20px rgba(255, 215, 0, 0.3); }
 
-        .ranking-card:hover {
-            transform: scale(1.02);
-            background: rgba(255, 255, 255, 0.12);
-        }
+        /* Global Menu Design */
+        .global-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 20px; }
+        .country-item { background: var(--card-bg); padding: 18px; border-radius: 16px; display: flex; align-items: center; gap: 12px; border: 1px solid rgba(255,255,255,0.05); cursor: pointer; }
+        .country-item:active { background: rgba(255,255,255,0.1); }
 
-        .rank-number {
-            font-weight: bold;
-            font-size: 1.2rem;
-            margin-right: 15px;
-            color: #4ade80; /* Earning Green */
-        }
+        /* Bottom Nav */
+        .nav-bar { position: fixed; bottom: 0; width: 100%; height: 75px; background: rgba(15, 2, 31, 0.98); display: flex; align-items: center; justify-content: space-evenly; border-top: 1px solid rgba(255,255,255,0.05); z-index: 2000; }
+        .nav-link { display: flex; flex-direction: column; align-items: center; font-size: 10px; color: var(--text-gray); }
+        .mic-btn { width: 62px; height: 62px; background: linear-gradient(45deg, var(--secondary), var(--primary)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; position: relative; top: -18px; border: 4px solid var(--bg); box-shadow: 0 8px 25px rgba(255, 45, 85, 0.4); }
 
-        /* অডিও ভিজ্যুয়ালাইজার সিমুলেশন */
-        .visualizer {
-            display: flex;
-            align-items: flex-end;
-            gap: 3px;
-            height: 30px;
-            margin-left: auto;
-        }
-
-        .bar {
-            width: 3px;
-            background: linear-gradient(to top, #7928CA, #FF0080);
-            border-radius: 2px;
-            animation: bounce 1s ease-in-out infinite;
-        }
-
-        @keyframes bounce {
-            0%, 100% { height: 5px; }
-            50% { height: 25px; }
-        }
-
-        /* সার্চ বার */
-        .search-box {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            padding: 12px 15px;
-            width: 100%;
-            box-sizing: border-box;
-            color: white;
-            outline: none;
-            margin-bottom: 20px;
-        }
-
+        /* Room Interior */
+        #room-view { position: fixed; inset: 0; background: linear-gradient(180deg, #1e0836, #0b0118); z-index: 9000; display: none; flex-direction: column; }
+        .grid-seats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; padding: 40px 20px; }
+        .seat-unit { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+        .seat-orb { width: 75px; height: 75px; border-radius: 50%; background: rgba(255,255,255,0.05); border: 2px dashed rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .seat-orb img { width: 100%; height: 100%; object-fit: cover; }
     </style>
 </head>
 <body>
 
-    <div class="glass-container">
-        <div class="header">
-            <button class="back-button">
-                <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
-            </button>
-            <h2 style="margin: 0; font-size: 1.2rem;">Ranking Board</h2>
-        </div>
-
-        <input type="text" class="search-box" placeholder="Search creators...">
-
-        <div class="ranking-card">
-            <div class="rank-number">01</div>
-            <div class="user-info">
-                <div style="font-weight: 500;">Tanvir Ahmed</div>
-                <div style="font-size: 0.8rem; color: #94a3b8;">Earned: $450.00</div>
-            </div>
-            <div class="visualizer">
-                <div class="bar" style="animation-delay: 0.1s;"></div>
-                <div class="bar" style="animation-delay: 0.3s;"></div>
-                <div class="bar" style="animation-delay: 0.2s;"></div>
-                <div class="bar" style="animation-delay: 0.4s;"></div>
+<!-- Main Interface -->
+<div id="main-app-ui">
+    <div class="top-bar">
+        <div class="tabs-wrapper">
+            <div class="tabs">
+                <div class="tab-item" onclick="changeFeedTab(this)">Follow</div>
+                <div class="tab-item" onclick="changeFeedTab(this)">Popular</div>
+                <div class="tab-item" onclick="changeFeedTab(this)">New</div>
+                <div class="tab-item" onclick="changeFeedTab(this)">Explore</div>
+                <div class="tab-item active" onclick="toggleGlassOverlay('global-panel', true)">Global</div>
             </div>
         </div>
-
-        <div class="ranking-card">
-            <div class="rank-number">02</div>
-            <div class="user-info">
-                <div style="font-weight: 500;">Rahat Kabir</div>
-                <div style="font-size: 0.8rem; color: #94a3b8;">Earned: $320.50</div>
-            </div>
-            <div class="visualizer">
-                <div class="bar" style="animation-delay: 0.5s;"></div>
-                <div class="bar" style="animation-delay: 0.2s;"></div>
-                <div class="bar" style="animation-delay: 0.4s;"></div>
-                <div class="bar" style="animation-delay: 0.1s;"></div>
-            </div>
+        <div class="header-actions">
+            <span onclick="toggleGlassOverlay('rank-panel', true)">🏆</span>
+            <span onclick="toggleGlassOverlay('search-panel', true)">🔍</span>
         </div>
-
     </div>
 
+    <div class="main-content" id="audioGrid">
+        <!-- JS-Generated 16 Cards -->
+    </div>
+
+    <div class="nav-bar">
+        <div class="nav-link"><span>🏠</span>Home</div>
+        <div class="nav-link"><span>🕒</span>History</div>
+        <div class="mic-btn" onclick="joinAudioRoom('My Party Room')">🎙️</div>
+        <div class="nav-link"><span>💬</span>Message</div>
+        <div class="nav-link"><span>👤</span>Me</div>
+    </div>
+</div>
+
+<!-- Original Ranking Panel -->
+<div id="rank-panel" class="full-screen-overlay">
+    <div class="glass-top">
+        <div class="back-arrow" onclick="toggleGlassOverlay('rank-panel', false)">
+            <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        </div>
+        <span style="font-weight:700; font-size:18px;">Daily Ranking</span>
+    </div>
+    <div style="flex:1; overflow-y:auto;">
+        <div class="rank-top">
+            <div class="user-podium"><img src="https://i.pravatar.cc/100?u=a2" class="podium-avatar"><span>User_2</span></div>
+            <div class="user-podium rank-gold"><img src="https://i.pravatar.cc/100?u=a1" class="podium-avatar"><span>TOP_ONE</span></div>
+            <div class="user-podium"><img src="https://i.pravatar.cc/100?u=a3" class="podium-avatar"><span>User_3</span></div>
+        </div>
+        <div id="extendedRankList" style="padding:10px;"></div>
+    </div>
+</div>
+
+<!-- Original Search Panel -->
+<div id="search-panel" class="full-screen-overlay">
+    <div class="glass-top">
+        <div class="back-arrow" onclick="toggleGlassOverlay('search-panel', false)">
+            <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        </div>
+        <input type="text" id="queryInput" placeholder="Search by ID (e.g. 1001)" 
+               style="flex:1; background:transparent; border:none; color:white; outline:none; font-size:16px;" 
+               oninput="executeSearch()">
+    </div>
+    <div id="searchResults" style="padding:20px;"></div>
+</div>
+
+<!-- Global Region Panel -->
+<div id="global-panel" class="full-screen-overlay">
+    <div class="glass-top">
+        <div class="back-arrow" onclick="toggleGlassOverlay('global-panel', false)">
+            <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        </div>
+        <span style="font-weight:700; font-size:18px;">Global Regions</span>
+    </div>
+    <div class="global-grid">
+        <div class="country-item" onclick="filterByRegion('Bangladesh')">🇧🇩 Bangladesh</div>
+        <div class="country-item" onclick="filterByRegion('India')">🇮🇳 India</div>
+        <div class="country-item" onclick="filterByRegion('Turkey')">🇹🇷 Turkey</div>
+        <div class="country-item" onclick="filterByRegion('USA')">🇺🇸 USA</div>
+        <div class="country-item" onclick="filterByRegion('Saudi Arabia')">🇸🇦 Saudi Arabia</div>
+        <div class="country-item" onclick="filterByRegion('Indonesia')">🇮🇩 Indonesia</div>
+        <div class="country-item" onclick="filterByRegion('Pakistan')">🇵🇰 Pakistan</div>
+        <div class="country-item" onclick="filterByRegion('Vietnam')">🇻🇳 Vietnam</div>
+    </div>
+</div>
+
+<!-- Audio Room Panel -->
+<div id="room-view">
+    <div style="padding:20px; display:flex; justify-content:space-between; align-items:center; background:rgba(0,0,0,0.2);">
+        <div style="display:flex; align-items:center; gap:12px;">
+            <div style="background:var(--primary); width:42px; height:42px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:900;">P</div>
+            <div>
+                <div id="currentRoomName" style="font-weight:800; font-size:15px;">Party Room</div>
+                <div style="font-size:10px; color:var(--gold);">ID: 778899</div>
+            </div>
+        </div>
+        <div onclick="leaveRoom()" style="font-size:26px; padding:5px;">✕</div>
+    </div>
+    <div class="grid-seats">
+        <script>
+            for(let i=1; i<=9; i++) {
+                document.write(`
+                    <div class="seat-unit" onclick="occupySeat(${i})">
+                        <div class="seat-orb" id="orb-${i}">👤</div>
+                        <div style="font-size:11px; color:#555;" id="user-${i}">Empty</div>
+                    </div>
+                `);
+            }
+        </script>
+    </div>
+</div>
+
+<script>
+    // App Logic
+    window.onload = () => {
+        refreshFeed();
+    };
+
+    function refreshFeed() {
+        const grid = document.getElementById('audioGrid');
+        grid.innerHTML = '';
+        for(let i=1; i<=16; i++) {
+            grid.innerHTML += `
+                <div class="room-card" onclick="joinAudioRoom('Premium Room ${i}')">
+                    <img src="https://picsum.photos/seed/${i+200}/400/500">
+                    <div class="live-tag">LIVE</div>
+                    <div class="card-details">
+                        <div style="font-weight:700; font-size:13px;">Pata Room ${i}</div>
+                        <div style="font-size:10px; color:#aaa;">ID: 100${i} | 1.2K Online</div>
+                    </div>
+                </div>`;
+        }
+    }
+
+    function toggleGlassOverlay(id, status) {
+        document.getElementById(id).style.display = status ? 'flex' : 'none';
+        if(id === 'rank-panel' && status) buildRankings();
+    }
+
+    function buildRankings() {
+        const list = document.getElementById('extendedRankList');
+        let content = '';
+        for(let i=4; i<=25; i++) {
+            content += `
+                <div style="display:flex; align-items:center; padding:15px; border-bottom:1px solid #1a1a2e;">
+                    <span style="width:35px; font-weight:900; color:#333;">${i}</span>
+                    <img src="https://i.pravatar.cc/100?u=id${i}" style="width:42px; height:42px; border-radius:50%; margin-right:15px; border:1px solid #333;">
+                    <div style="flex:1; font-weight:600;">Global_User_${i}</div>
+                    <div style="color:var(--gold); font-weight:800;">${(30-i)*50} XP</div>
+                </div>`;
+        }
+        list.innerHTML = content;
+    }
+
+    function executeSearch() {
+        const val = document.getElementById('queryInput').value;
+        const out = document.getElementById('searchResults');
+        if(!val) { out.innerHTML = ''; return; }
+        out.innerHTML = `
+            <div style="background:var(--card-bg); padding:18px; border-radius:18px; display:flex; align-items:center; gap:15px; border:1px solid rgba(255,255,255,0.05);">
+                <img src="https://i.pravatar.cc/100?u=search${val}" style="width:55px; height:55px; border-radius:50%;">
+                <div style="flex:1;">
+                    <div style="font-weight:700;">User_Result_${val}</div>
+                    <div style="font-size:11px; color:#555;">Level 24 | Bangladesh</div>
+                </div>
+                <button style="background:var(--primary); border:none; color:white; padding:8px 18px; border-radius:25px; font-weight:700; font-size:12px;">FOLLOW</button>
+            </div>`;
+    }
+
+    function joinAudioRoom(name) {
+        document.getElementById('room-view').style.display = 'flex';
+        document.getElementById('currentRoomName').innerText = name;
+    }
+
+    function leaveRoom() { document.getElementById('room-view').style.display = 'none'; }
+
+    function occupySeat(n) {
+        const orb = document.getElementById('orb-'+n);
+        const name = document.getElementById('user-'+n);
+        orb.innerHTML = `<img src="https://i.pravatar.cc/100?u=me">`;
+        orb.style.border = "2px solid var(--gold)";
+        orb.style.borderStyle = "solid";
+        name.innerText = "Ayan_King";
+        name.style.color = "white";
+    }
+
+    function changeFeedTab(el) {
+        document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+        el.classList.add('active');
+        refreshFeed();
+    }
+
+    function filterByRegion(region) {
+        toggleGlassOverlay('global-panel', false);
+        document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+        const globalTab = document.querySelector('.tab-item:last-child');
+        if(globalTab) globalTab.classList.add('active');
+        refreshFeed();
+    }
+</script>
 </body>
 </html>
